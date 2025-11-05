@@ -102,179 +102,216 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.car_rental), label: "Bookings"),
-          BottomNavigationBarItem(icon: Icon(Icons.mail), label: "Message"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-        ],
-      ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 🔹 Top Bar
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 100), // Add padding for floating nav
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "CARGO",
-                      style: GoogleFonts.poppins(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(Icons.directions_car, size: 28),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // 🔹 Search Bar
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.search, color: Colors.grey, size: 22),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: "Search your dream car...",
-                            hintStyle: GoogleFonts.poppins(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
-                            border: InputBorder.none,
+                    // 🔹 Top Bar
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "CARGO",
+                          style: GoogleFonts.poppins(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
                           ),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.directions_car, size: 28),
                         ),
-                        child: const Icon(Icons.tune, color: Colors.black, size: 20),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
 
-                // 🔹 Category Icons (Car/Motorcycle brands or types)
-                SizedBox(
-                  height: 90,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) {
-                      final category = categories[index];
-                      return Container(
-                        width: 70,
-                        margin: const EdgeInsets.only(right: 12),
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 60,
-                              width: 60,
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                category["icon"],
-                                color: Colors.white,
-                                size: 28,
+                    // 🔹 Search Bar
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.search, color: Colors.grey, size: 22),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: "Search your dream car...",
+                                hintStyle: GoogleFonts.poppins(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                                border: InputBorder.none,
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            Text(
-                              category["name"],
-                              style: GoogleFonts.poppins(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 10),
+                            child: const Icon(Icons.tune, color: Colors.black, size: 20),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
 
-                // 🔹 Toggle Buttons (Car / Motorcycle)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildToggleButton("Car", showCars, () {
-                      setState(() => showCars = true);
-                    }),
-                    const SizedBox(width: 12),
-                    _buildToggleButton("Motorcycle", !showCars, () {
-                      setState(() => showCars = false);
-                    }),
+                    // 🔹 Category Icons (Car/Motorcycle brands or types)
+                    SizedBox(
+                      height: 90,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: categories.length,
+                        itemBuilder: (context, index) {
+                          final category = categories[index];
+                          return Container(
+                            width: 70,
+                            margin: const EdgeInsets.only(right: 12),
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 60,
+                                  width: 60,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    category["icon"],
+                                    color: Colors.white,
+                                    size: 28,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  category["name"],
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // 🔹 Toggle Buttons (Car / Motorcycle)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildToggleButton("Car", showCars, () {
+                          setState(() => showCars = true);
+                        }),
+                        const SizedBox(width: 12),
+                        _buildToggleButton("Motorcycle", !showCars, () {
+                          setState(() => showCars = false);
+                        }),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // 🔹 Best Vehicle Section
+                    _buildSectionHeader("Best Vehicle", "View All"),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 240,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: bestVehicles.length,
+                        itemBuilder: (context, index) {
+                          return _buildVehicleCard(bestVehicles[index]);
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // 🔹 Newly Added Section
+                    _buildSectionHeader("Newly", "View All"),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 280,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: newVehicles.length,
+                        itemBuilder: (context, index) {
+                          return _buildLargeVehicleCard(newVehicles[index]);
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
-                const SizedBox(height: 20),
-
-                // 🔹 Best Vehicle Section
-                _buildSectionHeader("Best Vehicle", "View All"),
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: 240,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: bestVehicles.length,
-                    itemBuilder: (context, index) {
-                      return _buildVehicleCard(bestVehicles[index]);
-                    },
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // 🔹 Newly Added Section
-                _buildSectionHeader("Newly", "View All"),
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: 280,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: newVehicles.length,
-                    itemBuilder: (context, index) {
-                      return _buildLargeVehicleCard(newVehicles[index]);
-                    },
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
+              ),
             ),
-          ),
+            
+            // 🔹 Floating Navigation Bar
+            Positioned(
+              bottom: 20,
+              left: 20,
+              right: 20,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildNavItem(Icons.home_filled, true),
+                    _buildNavItem(Icons.car_rental, false),
+                    _buildNavItem(Icons.mail_outline, false),
+                    _buildNavItem(Icons.person_outline, false),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, bool isSelected) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.white : Colors.transparent,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        icon,
+        color: isSelected ? Colors.black : Colors.white,
+        size: 24,
       ),
     );
   }

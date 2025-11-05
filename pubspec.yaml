@@ -71,6 +71,15 @@ flutter:
     - assets/car3.jpg
     - assets/moto2.jpg
     - assets/moto1.jpg
+    - asset/icons/convertible.png
+    - asset/icons/coupe.png
+    - asset/icons/hatchback.png
+    - asset/icons/jeep.png
+    - asset/icons/pickup.png
+    - asset/icons/sedan.png
+    - asset/icons/station-wagon.png
+    - asset/icons/suv.png
+    - asset/icons/van.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
