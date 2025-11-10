@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'home.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -21,7 +22,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     {
       "title": "Lets Start\nA New Experience\nWith Car rental.",
       "subtitle":
-          "Discover affordable transportation with Cargo. We’re here to provide you with a seamless peer-to-peer vehicle rental experience. Let’s get started on your journey.",
+          "Discover affordable transportation with Cargo. We're here to provide you with a seamless peer-to-peer vehicle rental experience. Let's get started on your journey.",
       "image": "assets/car3.jpg",
       "button": "Get Started"
     },
@@ -116,35 +117,43 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                     // 🔹 Button
                     SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_currentPage < _pages.length - 1) {
-                            _controller.nextPage(
-                              duration: const Duration(milliseconds: 400),
-                              curve: Curves.easeInOut,
-                            );
-                          } else {
-                            // TODO: Navigate to home or login screen
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black.withValues(alpha: 0.5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (_currentPage < _pages.length - 1) {
+                                _controller.nextPage(
+                                  duration: const Duration(milliseconds: 400),
+                                  curve: Curves.easeInOut,
+                                );
+                              } else {
+                                // Navigate to HomeScreen
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomeScreen(),
+                                  ),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black.withValues(alpha: 0.5),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: Text(
+                              page["button"]!,
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        child: Text(
-                          page["button"]!,
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
+
+
                     const SizedBox(height: 60),
                   ],
                 ),
