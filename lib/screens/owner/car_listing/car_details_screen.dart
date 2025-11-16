@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../models/car_listing.dart';
-import 'car_preference_screen.dart';
-import 'package:cargo/models/car_listing.dart';
-
+import 'car_preferences_screen.dart';
 
 class CarDetailsScreen extends StatefulWidget {
   final CarListing? existingListing;
