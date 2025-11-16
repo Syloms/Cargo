@@ -1,30 +1,27 @@
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 
-class AppTextStyle {
-  //headings
+class AppTextStyles {
+  // Headings
   static TextStyle h1 = GoogleFonts.poppins(
     fontSize: 32,
     fontWeight: FontWeight.w700,
     height: 1.2,
-    letterSpacing:  -0.5,
-
+    letterSpacing: -0.5,
   );
 
   static TextStyle h2 = GoogleFonts.poppins(
     fontSize: 24,
     fontWeight: FontWeight.w600,
-    letterSpacing:  -0.5,
-    
+    letterSpacing: -0.5,
   );
   
   static TextStyle h3 = GoogleFonts.poppins(
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    
   );
 
-  // body text
+  // Body Text
   static TextStyle bodyLarge = GoogleFonts.poppins(
     fontSize: 16,
     fontWeight: FontWeight.w400,
@@ -33,7 +30,7 @@ class AppTextStyle {
   static TextStyle bodyMedium = GoogleFonts.poppins(
     fontSize: 15,
     fontWeight: FontWeight.w400,
-    letterSpacing:  0.2, 
+    letterSpacing: 0.2, 
   );
 
   static TextStyle bodySmall = GoogleFonts.poppins(
@@ -41,11 +38,11 @@ class AppTextStyle {
     fontWeight: FontWeight.w400,
   );
 
-  // button text
+  // Button Text
   static TextStyle buttonLarge = GoogleFonts.poppins(
     fontSize: 16,
     fontWeight: FontWeight.w600,
-    letterSpacing:  0.5, 
+    letterSpacing: 0.5, 
   );
 
   static TextStyle buttonMedium = GoogleFonts.poppins(
@@ -58,19 +55,18 @@ class AppTextStyle {
     fontWeight: FontWeight.w600,
   );
 
-  // label text
-   static TextStyle labelMedium = GoogleFonts.poppins(
+  // Label Text
+  static TextStyle labelMedium = GoogleFonts.poppins(
     fontSize: 14,
     fontWeight: FontWeight.w500,
   );
 
-  // helper funtions for color variations
-  static TextStyle withColor(TextStyle style, Color color){
+  // Helper Functions
+  static TextStyle withColor(TextStyle style, Color color) {
     return style.copyWith(color: color);
   }
   
-  //
-  static TextStyle withWeight(TextStyle style, FontWeight weight){
+  static TextStyle withWeight(TextStyle style, FontWeight weight) {
     return style.copyWith(fontWeight: weight);
   }
 }

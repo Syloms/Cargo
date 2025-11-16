@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'home.dart';
+import '../user/home_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -21,12 +21,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     },
     {
       "title": "Lets Start\nA New Experience\nWith Car rental.",
-      "subtitle":
-          "Discover affordable transportation with Cargo. We're here to provide you with a seamless peer-to-peer vehicle rental experience. Let's get started on your journey.",
+      "subtitle": "Discover affordable transportation with Cargo. We're here to provide you with a seamless peer-to-peer vehicle rental experience.",
       "image": "assets/car3.jpg",
       "button": "Get Started"
     },
   ];
+
+  void _onGetStarted() {
+    if (_currentPage < _pages.length - 1) {
+      _controller.nextPage(
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,38 +53,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           return Stack(
             fit: StackFit.expand,
             children: [
-              // 🔹 Background image
-              Image.asset(
-                page["image"]!,
-                fit: BoxFit.cover,
-              ),
-
-              // 🔹 Gradient overlay (black → transparent → black)
+              Image.asset(page["image"]!, fit: BoxFit.cover),
               Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black87,      // dark at top
-                      Colors.transparent,  // clear in middle
-                      Colors.black54,      // slightly dark at bottom
-                    ],
+                    colors: [Colors.black87, Colors.transparent, Colors.black54],
                     stops: [0.0, 0.5, 1.0],
                   ),
                 ),
               ),
-
-
-              // 🔹 Page Content
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 60),
-
-                    // 🔹 Circular Logo (smaller)
                     Container(
                       height: 60,
                       width: 60,
@@ -81,16 +79,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       padding: const EdgeInsets.all(8),
                       child: ClipOval(
-                        child: Image.asset(
-                          "assets/logo.png",
-                          fit: BoxFit.contain,
-                        ),
+                        child: Image.asset("assets/logo.png", fit: BoxFit.contain),
                       ),
                     ),
-
                     const Spacer(),
-
-                    // 🔹 Title
                     Text(
                       page["title"]!,
                       style: GoogleFonts.poppins(
@@ -101,8 +93,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-
-                    // 🔹 Subtitle (optional)
                     if (page["subtitle"] != null)
                       Text(
                         page["subtitle"]!,
@@ -112,48 +102,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           height: 1.4,
                         ),
                       ),
-
                     const SizedBox(height: 30),
-
-                    // 🔹 Button
                     SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (_currentPage < _pages.length - 1) {
-                                _controller.nextPage(
-                                  duration: const Duration(milliseconds: 400),
-                                  curve: Curves.easeInOut,
-                                );
-                              } else {
-                                // Navigate to HomeScreen
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomeScreen(),
-                                  ),
-                                );
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black.withValues(alpha: 0.5),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                            child: Text(
-                              page["button"]!,
-                              style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _onGetStarted,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black.withOpacity(0.5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: Text(
+                          page["button"]!,
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-
-
+                      ),
+                    ),
                     const SizedBox(height: 60),
                   ],
                 ),
