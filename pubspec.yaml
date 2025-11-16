@@ -40,6 +40,10 @@ dependencies:
   share_plus: ^12.0.1
   shared_preferences: ^2.3.2
   image_picker: ^1.0.7
+  flutter_map: ^6.1.0          # For MapTiler
+  latlong2: ^0.9.0             # Coordinates
+  geolocator: ^10.1.0          # Current location
+  geocoding: ^2.1.1            # Address conversion
 
 dev_dependencies:
   flutter_test:

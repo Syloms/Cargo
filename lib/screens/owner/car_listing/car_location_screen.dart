@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import '../../../models/car_listing.dart';
 import 'upload_documents_screen.dart';
 
@@ -15,11 +19,142 @@ class CarLocationScreen extends StatefulWidget {
 class _CarLocationScreenState extends State<CarLocationScreen> {
   final _addressController = TextEditingController();
   bool _showMap = false;
+  final MapController _mapController = MapController();
+  LatLng _currentPosition = LatLng(14.5995, 120.9842); // Manila default
+  List<Marker> _markers = [];
+  bool _isLoadingLocation = false;
+  
+  // Replace with your MapTiler API key
+  final String _mapTilerApiKey = 'YGJxmPnRtlTHI1endzDH';
 
   @override
   void initState() {
     super.initState();
     _addressController.text = widget.listing.address ?? '';
+    if (widget.listing.latitude != null && widget.listing.longitude != null) {
+      _currentPosition = LatLng(widget.listing.latitude!, widget.listing.longitude!);
+      _addMarker(_currentPosition);
+    } else {
+      _addMarker(_currentPosition);
+    }
+    _requestLocationPermission();
+  }
+
+  Future<void> _requestLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+  }
+
+  Future<void> _getCurrentLocation() async {
+    setState(() => _isLoadingLocation = true);
+    
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      
+      LatLng newPosition = LatLng(position.latitude, position.longitude);
+      
+      // Get address from coordinates
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+        String address = '${place.street}, ${place.locality}, ${place.administrativeArea}';
+        _addressController.text = address;
+        widget.listing.address = address;
+      }
+      
+      setState(() {
+        _currentPosition = newPosition;
+        widget.listing.latitude = position.latitude;
+        widget.listing.longitude = position.longitude;
+        _addMarker(newPosition);
+      });
+      
+      _mapController.move(newPosition, 15);
+    } catch (e) {
+      debugPrint('Error getting location: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not get current location: $e')),
+        );
+      }
+    } finally {
+      setState(() => _isLoadingLocation = false);
+    }
+  }
+
+  void _addMarker(LatLng position) {
+    setState(() {
+      _markers = [
+        Marker(
+          point: position,
+          width: 40,
+          height: 40,
+          child: const Icon(
+            Icons.location_pin,
+            color: Colors.red,
+            size: 40,
+          ),
+        ),
+      ];
+    });
+  }
+
+  Future<void> _updateAddressFromCoordinates(LatLng position) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+        String address = '${place.street}, ${place.locality}, ${place.administrativeArea}';
+        setState(() {
+          _addressController.text = address;
+          widget.listing.address = address;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error getting address: $e');
+    }
+  }
+
+  Future<void> _searchAddress(String address) async {
+    if (address.isEmpty) return;
+    
+    try {
+      List<Location> locations = await locationFromAddress(address);
+      
+      if (locations.isNotEmpty) {
+        Location location = locations[0];
+        LatLng newPosition = LatLng(location.latitude, location.longitude);
+        
+        setState(() {
+          _currentPosition = newPosition;
+          widget.listing.latitude = location.latitude;
+          widget.listing.longitude = location.longitude;
+          _addMarker(newPosition);
+          _showMap = true;
+        });
+        
+        _mapController.move(newPosition, 15);
+      }
+    } catch (e) {
+      debugPrint('Error searching address: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not find address')),
+        );
+      }
+    }
   }
 
   @override
@@ -74,6 +209,10 @@ class _CarLocationScreenState extends State<CarLocationScreen> {
                       style: GoogleFonts.poppins(fontSize: 14),
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.location_on, color: Colors.green),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.search, color: Colors.green),
+                          onPressed: () => _searchAddress(_addressController.text),
+                        ),
                         hintText: 'Please Input Complete Address',
                         hintStyle: GoogleFonts.poppins(color: Colors.grey[400]),
                         filled: true,
@@ -123,50 +262,67 @@ class _CarLocationScreenState extends State<CarLocationScreen> {
                       Container(
                         height: 300,
                         decoration: BoxDecoration(
-                          color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey[300]!),
                         ),
-                        child: Stack(
-                          children: [
-                            // Map placeholder - integrate with Google Maps or other map service
-                            Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.map, size: 64, color: Colors.grey[400]),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Map View',
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.grey[600],
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Integrate Google Maps here',
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.grey[400],
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: FlutterMap(
+                            mapController: _mapController,
+                            options: MapOptions(
+                              initialCenter: _currentPosition,
+                              initialZoom: 15,
+                              onTap: (tapPosition, point) {
+                                setState(() {
+                                  widget.listing.latitude = point.latitude;
+                                  widget.listing.longitude = point.longitude;
+                                  _currentPosition = point;
+                                  _addMarker(point);
+                                });
+                                _updateAddressFromCoordinates(point);
+                              },
                             ),
-                            Positioned(
-                              top: 12,
-                              right: 12,
-                              child: FloatingActionButton.small(
-                                onPressed: () {
-                                  // Get current location
-                                },
-                                backgroundColor: Colors.white,
-                                child: const Icon(Icons.my_location, color: Colors.black),
+                            children: [
+                              TileLayer(
+                                urlTemplate: 'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=$_mapTilerApiKey',
+                                userAgentPackageName: 'com.example.cargo',
                               ),
-                            ),
-                          ],
+                              MarkerLayer(
+                                markers: _markers,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
+                      const SizedBox(height: 12),
+                      
+                      // Current location button
+                      ElevatedButton.icon(
+                        onPressed: _isLoadingLocation ? null : _getCurrentLocation,
+                        icon: _isLoadingLocation
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                            : const Icon(Icons.my_location, size: 20),
+                        label: Text(
+                          _isLoadingLocation ? 'Getting location...' : 'Use Current Location',
+                          style: GoogleFonts.poppins(fontSize: 14),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      
                       const SizedBox(height: 12),
                       Container(
                         padding: const EdgeInsets.all(12),
@@ -180,7 +336,7 @@ class _CarLocationScreenState extends State<CarLocationScreen> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Lat/Lng: ${widget.listing.latitude ?? '0.0'}, ${widget.listing.longitude ?? '0.0'}',
+                                'Lat/Lng: ${widget.listing.latitude?.toStringAsFixed(6) ?? '0.0'}, ${widget.listing.longitude?.toStringAsFixed(6) ?? '0.0'}',
                                 style: GoogleFonts.poppins(
                                   fontSize: 12,
                                   color: Colors.grey[700],
