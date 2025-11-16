@@ -24,6 +24,15 @@ class _CarPricingScreenState extends State<CarPricingScreen> {
     }
   }
 
+  bool _canContinue() {
+    final canContinue = widget.listing.dailyRate != null && widget.listing.dailyRate! > 0;
+    debugPrint('=== Can Continue Check ===');
+    debugPrint('Daily rate: ${widget.listing.dailyRate}');
+    debugPrint('Can continue: $canContinue');
+    debugPrint('========================');
+    return canContinue;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,9 +101,14 @@ class _CarPricingScreenState extends State<CarPricingScreen> {
                                 contentPadding: EdgeInsets.zero,
                               ),
                               onChanged: (value) {
+                                debugPrint('Value entered: $value');
                                 if (value.isNotEmpty) {
                                   widget.listing.dailyRate = double.tryParse(value);
+                                  debugPrint('Parsed dailyRate: ${widget.listing.dailyRate}');
+                                } else {
+                                  widget.listing.dailyRate = null;
                                 }
+                                setState(() {});
                               },
                             ),
                           ),
@@ -112,16 +126,14 @@ class _CarPricingScreenState extends State<CarPricingScreen> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: widget.listing.dailyRate != null && widget.listing.dailyRate! > 0
-                      ? () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CarLocationScreen(listing: widget.listing),
-                            ),
-                          );
-                        }
-                      : null,
+                  onPressed: _canContinue() ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CarLocationScreen(listing: widget.listing),
+                      ),
+                    );
+                  } : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     disabledBackgroundColor: Colors.grey[300],
@@ -133,7 +145,7 @@ class _CarPricingScreenState extends State<CarPricingScreen> {
                   child: Text(
                     'Continue',
                     style: GoogleFonts.poppins(
-                      color: widget.listing.dailyRate != null && widget.listing.dailyRate! > 0
+                      color: _canContinue()
                           ? const Color(0xFFCDFE3D)
                           : Colors.grey[500],
                       fontSize: 16,
