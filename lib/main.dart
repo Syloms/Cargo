@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:cargo/widgets/verify_popup.dart';
-import 'package:cargo/screens/onboarding.dart'; // Import your existing onboarding
+import 'screens/onboarding_screen/onboarding.dart';
+import 'widgets/shared/verify_popup.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,13 +15,13 @@ class CargoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Cargo',
       debugShowCheckedModeBanner: false,
-      home: const OnboardingWrapper(), // Use wrapper instead
+      home:  OnboardingWrapper(),
     );
   }
 }
 
-// Wrapper to show verify popup before onboarding
 class OnboardingWrapper extends StatefulWidget {
   const OnboardingWrapper({super.key});
 
@@ -42,6 +42,6 @@ class _OnboardingWrapperState extends State<OnboardingWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return const OnboardingScreen(); // Your existing onboarding
+    return const OnboardingScreen();
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cargo/widgets/verify_popup.dart'; // Ensure this import is correct
+import '../../widgets/shared/verify_popup.dart';
+import '../../models/vehicle_model.dart';
+import '../owner/dashboard.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,12 +13,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool showCars = true;
+  int _selectedNavIndex = 0;
 
-  // This initState ensures the popup shows when HomeScreen loads
   @override
   void initState() {
     super.initState();
-    // Show verification popup when home screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         VerifyPopup.showIfNotVerified(context);
@@ -24,77 +25,49 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // Best Cars
-  final List<Map<String, dynamic>> bestCars = [
-    {
-      "name": "Ferrari FF",
-      "category": "Sedan",
-      "location": "Washington, DC",
-      "price": "\$100/Day",
-      "image": "assets/car1.jpg",
-      "rating": 5.0,
-      "seats": "4 Seats",
-    },
-    {
-      "name": "Tesla Model S",
-      "category": "Electric",
-      "location": "Chicago, USA",
-      "price": "\$130/Day",
-      "image": "assets/car2.jpg",
-      "rating": 5.0,
-      "seats": "5 Seats",
-    },
+  final List<VehicleModel> bestCars = [
+    VehicleModel(
+      name: "Ferrari FF",
+      category: "Sedan",
+      location: "Washington, DC",
+      price: "\$100/Day",
+      image: "assets/car1.jpg",
+      rating: 5.0,
+      seats: "4 Seats",
+    ),
+    VehicleModel(
+      name: "Tesla Model S",
+      category: "Electric",
+      location: "Chicago, USA",
+      price: "\$130/Day",
+      image: "assets/car2.jpg",
+      rating: 5.0,
+      seats: "5 Seats",
+    ),
   ];
 
-  // Best Motorcycles
-  final List<Map<String, dynamic>> bestMotorcycles = [
-    {
-      "name": "Yamaha R1",
-      "category": "Sport",
-      "location": "Cebu City",
-      "price": "\$40/Day",
-      "image": "assets/moto1.jpg",
-      "rating": 5.0,
-    },
-    {
-      "name": "Kawasaki Ninja",
-      "category": "Sport",
-      "location": "Davao City",
-      "price": "\$55/Day",
-      "image": "assets/moto2.jpg",
-      "rating": 4.8,
-    },
-  ];
-
-  // Newly Added Cars
-  final List<Map<String, dynamic>> newCars = [
-    {
-      "name": "BMW M5",
-      "category": "Luxury",
-      "location": "New York, USA",
-      "price": "\$150/Day",
-      "image": "assets/car3.jpg",
-      "rating": 4.9,
-      "seats": "5 Seats",
-    },
-  ];
-
-  // Newly Added Motorcycles
-  final List<Map<String, dynamic>> newMotorcycles = [
-    {
-      "name": "Harley Davidson",
-      "category": "Cruiser",
-      "location": "Manila",
-      "price": "\$60/Day",
-      "image": "assets/moto1.jpg",
-      "rating": 4.7,
-    },
+  final List<VehicleModel> bestMotorcycles = [
+    VehicleModel(
+      name: "Yamaha R1",
+      category: "Sport",
+      location: "Cebu City",
+      price: "\$40/Day",
+      image: "assets/moto1.jpg",
+      rating: 5.0,
+    ),
+    VehicleModel(
+      name: "Kawasaki Ninja",
+      category: "Sport",
+      location: "Davao City",
+      price: "\$55/Day",
+      image: "assets/moto2.jpg",
+      rating: 4.8,
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
     final bestVehicles = showCars ? bestCars : bestMotorcycles;
-    final newVehicles = showCars ? newCars : newMotorcycles;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -108,7 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 🔹 Top Bar
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -120,19 +92,27 @@ class _HomeScreenState extends State<HomeScreen> {
                             letterSpacing: 1,
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(10),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const OwnerDashboardScreen(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(Icons.directions_car, size: 28),
                           ),
-                          child: const Icon(Icons.directions_car, size: 28),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-
-                    // 🔹 Search Bar
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.grey.shade100,
@@ -167,8 +147,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
-                    // 🔹 Toggle Buttons (Car / Motorcycle)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -182,8 +160,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     const SizedBox(height: 20),
-
-                    // 🔹 Best Vehicle Section
                     _buildSectionHeader("Best Vehicle", "View All"),
                     const SizedBox(height: 12),
                     SizedBox(
@@ -196,28 +172,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 24),
-
-                    // 🔹 Newly Added Section
-                    _buildSectionHeader("Newly", "View All"),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      height: 280,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: newVehicles.length,
-                        itemBuilder: (context, index) {
-                          return _buildLargeVehicleCard(newVehicles[index]);
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 20),
                   ],
                 ),
               ),
             ),
-
-            // 🔹 Floating Navigation Bar
             Positioned(
               bottom: 20,
               left: 20,
@@ -238,10 +196,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildNavItem(Icons.home_filled, true),
-                    _buildNavItem(Icons.car_rental, false),
-                    _buildNavItem(Icons.mail_outline, false),
-                    _buildNavItem(Icons.person_outline, false),
+                    _buildNavItem(Icons.home_filled, 0),
+                    _buildNavItem(Icons.car_rental, 1),
+                    _buildNavItem(Icons.mail_outline, 2),
+                    _buildNavItem(Icons.person_outline, 3),
                   ],
                 ),
               ),
@@ -252,17 +210,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildNavItem(IconData icon, bool isSelected) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isSelected ? Colors.white : Colors.transparent,
-        shape: BoxShape.circle,
-      ),
-      child: Icon(
-        icon,
-        color: isSelected ? Colors.black : Colors.white,
-        size: 24,
+  Widget _buildNavItem(IconData icon, int index) {
+    final bool isSelected = _selectedNavIndex == index;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedNavIndex = index),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white : Colors.transparent,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: isSelected ? Colors.black : Colors.white, size: 24),
       ),
     );
   }
@@ -292,26 +250,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: GoogleFonts.poppins(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          actionText,
-          style: GoogleFonts.poppins(
-            color: Colors.grey,
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        Text(title, style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold)),
+        Text(actionText, style: GoogleFonts.poppins(color: Colors.grey, fontSize: 13)),
       ],
     );
   }
 
-  Widget _buildVehicleCard(Map<String, dynamic> vehicle) {
+  Widget _buildVehicleCard(VehicleModel vehicle) {
     return Container(
       width: 160,
       margin: const EdgeInsets.only(right: 14),
@@ -319,11 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade300,
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
+          BoxShadow(color: Colors.grey.shade300, blurRadius: 10, offset: const Offset(0, 4))
         ],
       ),
       child: Column(
@@ -331,12 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.asset(
-              vehicle["image"]!,
-              height: 110,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset(vehicle.image, height: 110, width: double.infinity, fit: BoxFit.cover),
           ),
           Padding(
             padding: const EdgeInsets.all(10),
@@ -344,22 +280,12 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  vehicle["name"]!,
-                  style: GoogleFonts.poppins(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  vehicle.name,
+                  style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  vehicle["category"]!,
-                  style: GoogleFonts.poppins(
-                    fontSize: 11,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
+                Text(vehicle.category, style: GoogleFonts.poppins(fontSize: 11, color: Colors.grey.shade600)),
                 const SizedBox(height: 6),
                 Row(
                   children: [
@@ -367,13 +293,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        vehicle["location"]!,
-                        style: GoogleFonts.poppins(
-                          fontSize: 10,
-                          color: Colors.grey,
-                        ),
+                        vehicle.location,
+                        style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey),
                         maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -382,134 +304,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      vehicle["price"]!,
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text(vehicle.price, style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold)),
                     Row(
                       children: [
                         const Icon(Icons.star, size: 12, color: Colors.amber),
                         const SizedBox(width: 2),
-                        Text(
-                          vehicle["rating"].toString(),
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                        Text(vehicle.rating.toString(), style: GoogleFonts.poppins(fontSize: 11)),
                       ],
                     ),
                   ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLargeVehicleCard(Map<String, dynamic> vehicle) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.85,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade300,
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          )
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: Image.asset(
-              vehicle["image"]!,
-              height: 170,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        vehicle["name"]!,
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.star, size: 12, color: Colors.amber),
-                          const SizedBox(width: 4),
-                          Text(
-                            vehicle["rating"].toString(),
-                            style: GoogleFonts.poppins(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  vehicle["category"]!,
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, size: 14, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(
-                      vehicle["location"]!,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  vehicle["price"]!,
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
               ],
             ),
