@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../models/car_listing.dart';
-import 'car_photos_screen.dart';
+import 'upload_documents_screen.dart';
 
 class CarLocationScreen extends StatefulWidget {
   final CarListing listing;
@@ -206,7 +206,7 @@ class _CarLocationScreenState extends State<CarLocationScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CarPhotosScreen(listing: widget.listing),
+                              builder: (context) => UploadDocumentsScreen(listing: widget.listing),
                             ),
                           );
                         }
