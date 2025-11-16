@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cargo/widgets/verify_popup.dart'; // Ensure this import is correct
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,21 +12,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool showCars = true;
 
-  // Car categories
-  final List<Map<String, dynamic>> carCategories = [
-    {"name": "Lamborghini", "icon": Icons.directions_car},
-    {"name": "Tesla", "icon": Icons.electric_car},
-    {"name": "BMW", "icon": Icons.drive_eta},
-    {"name": "Audi", "icon": Icons.car_rental},
-  ];
-
-  // Motorcycle categories
-  final List<Map<String, dynamic>> motorcycleCategories = [
-    {"name": "Sport", "icon": Icons.two_wheeler},
-    {"name": "Cruiser", "icon": Icons.motorcycle},
-    {"name": "Touring", "icon": Icons.sports_motorsports},
-    {"name": "Scooter", "icon": Icons.moped},
-  ];
+  // This initState ensures the popup shows when HomeScreen loads
+  @override
+  void initState() {
+    super.initState();
+    // Show verification popup when home screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        VerifyPopup.showIfNotVerified(context);
+      }
+    });
+  }
 
   // Best Cars
   final List<Map<String, dynamic>> bestCars = [
@@ -96,7 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final categories = showCars ? carCategories : motorcycleCategories;
     final bestVehicles = showCars ? bestCars : bestMotorcycles;
     final newVehicles = showCars ? newCars : newMotorcycles;
 
@@ -106,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Stack(
           children: [
             SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 100), // Add padding for floating nav
+              padding: const EdgeInsets.only(bottom: 100),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -150,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Expanded(
                             child: TextField(
                               decoration: InputDecoration(
-                                hintText: "Search your dream car...",
+                                hintText: "Search your dream vehicle...",
                                 hintStyle: GoogleFonts.poppins(
                                   color: Colors.grey,
                                   fontSize: 14,
@@ -171,51 +167,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
-                    // 🔹 Category Icons (Car/Motorcycle brands or types)
-                    SizedBox(
-                      height: 90,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: categories.length,
-                        itemBuilder: (context, index) {
-                          final category = categories[index];
-                          return Container(
-                            width: 70,
-                            margin: const EdgeInsets.only(right: 12),
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    category["icon"],
-                                    color: Colors.white,
-                                    size: 28,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  category["name"],
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 10),
 
                     // 🔹 Toggle Buttons (Car / Motorcycle)
                     Row(
@@ -265,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            
+
             // 🔹 Floating Navigation Bar
             Positioned(
               bottom: 20,
