@@ -4,6 +4,7 @@ import 'widgets/owner/dashboard_header.dart';
 import 'widgets/owner/car_listing_banner.dart';
 import 'widgets/owner/stats_card.dart';
 import 'widgets/owner/earnings_chart.dart';
+import 'package:cargo/screens/owner/car_listing/car_details_screen.dart';
 
 class OwnerDashboardScreen extends StatefulWidget {
   const OwnerDashboardScreen({super.key});
@@ -42,10 +43,17 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
       ),
       bottomNavigationBar: _buildBottomNavBar(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: AppColors.accent,
-        child: const Icon(Icons.add, color: Colors.black, size: 32),
-      ),
+        onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>  CarDetailsScreen(),
+              ),
+    );
+  },
+  backgroundColor: AppColors.accent,
+  child: const Icon(Icons.add, color: Colors.white, size: 32),
+),
     );
   }
 
