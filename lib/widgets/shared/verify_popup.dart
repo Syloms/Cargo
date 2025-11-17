@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../screens/verification/personal_info_screen.dart';
 
 class VerifyPopup {
   static Future<void> showIfNotVerified(BuildContext context) async {
@@ -11,7 +12,7 @@ class VerifyPopup {
       await showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => Dialog(
+        builder: (dialogContext) => Dialog(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: Container(
@@ -27,7 +28,7 @@ class VerifyPopup {
                       alignment: Alignment.topLeft,
                       child: IconButton(
                         icon: const Icon(Icons.close, color: Colors.grey),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => Navigator.pop(dialogContext),
                         padding: EdgeInsets.zero,
                       ),
                     ),
@@ -95,8 +96,15 @@ class VerifyPopup {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          box.write('isVerified', true);
-                          Navigator.pop(context);
+                          // Close the dialog using dialog context
+                          Navigator.of(dialogContext).pop();
+                          
+                          // Navigate using parent context
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const PersonalInfoScreen(),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
