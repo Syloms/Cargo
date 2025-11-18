@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/shared/verify_popup.dart';
 import '../../models/vehicle_model.dart';
 import '../owner/dashboard.dart';
+import '../../widgets/shared/vehicle_filter_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool showCars = true;
   int _selectedNavIndex = 0;
+  Map<String, dynamic>? _appliedFilters;
 
   @override
   void initState() {
@@ -64,6 +66,26 @@ class _HomeScreenState extends State<HomeScreen> {
       rating: 4.8,
     ),
   ];
+
+  void _showFilterPopup() {
+    print('Filter button clicked!'); // Debug print
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        print('Building VehicleFilterScreen...'); // Debug print
+        return const VehicleFilterScreen();
+      },
+    ).then((filters) {
+      if (filters != null) {
+        setState(() {
+          _appliedFilters = filters;
+        });
+        print('Applied filters: $filters');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,13 +157,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
+                          GestureDetector(
+                            onTap: _showFilterPopup,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: _appliedFilters != null ? Colors.black : Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.tune,
+                                color: _appliedFilters != null ? const Color(0xFFCDFE3D) : Colors.black,
+                                size: 20,
+                              ),
                             ),
-                            child: const Icon(Icons.tune, color: Colors.black, size: 20),
                           ),
                         ],
                       ),

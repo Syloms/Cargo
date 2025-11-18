@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../models/car_listing.dart';
-import 'car_photo_capture_screen.dart';
+import 'package:cargo/models/car_listing.dart';
 
 class CarPhotosDiagramScreen extends StatefulWidget {
   final CarListing listing;
@@ -16,18 +15,20 @@ class _CarPhotosDiagramScreenState extends State<CarPhotosDiagramScreen> {
   final Map<int, String?> uploadedPhotos = {};
   
   final List<String> photoLabels = [
-    'Front',               // 1
-    'Front Right 3/4ths',  // 2
-    'Rear Right',          // 3
-    'Rear Right 3/4ths',   // 4
-    'Rear',                // 5
-    'Rear Left 3/4ths',    // 6
-    'Rear Left',           // 7
-    'Front Left 3/4ths',   // 8
-    'Front Seats',         // 9
-    'Back Seats',          // 10
-    'Trunk',               // 11
-  ];
+  'Front',               // 1
+  'Front Right 3/4ths',  // 2
+  'Right Side',          // 3
+  'Rear Right 3/4ths',   // 4
+  'Rear',                // 5
+  'Rear Left 3/4ths',    // 6
+  'Left Side',           // 7
+  'Front Left 3/4ths',   // 8
+  'Front Seats',         // 9
+  'Back Seats',          // 10
+  'Trunk',               // 11
+];
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -72,25 +73,52 @@ class _CarPhotosDiagramScreenState extends State<CarPhotosDiagramScreen> {
                     
                     // Car diagram with numbered spots
                     Center(
-                      child: Stack(
-                        children: [
-                          // Car image
-                          Image.asset(
-                            'assets/car_top_view.png', // Add this asset
-                            width: MediaQuery.of(context).size.width * 0.7,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: MediaQuery.of(context).size.width * 0.7,
-                                height: 400,
-                                color: Colors.grey[200],
-                                child: const Icon(Icons.directions_car, size: 100),
-                              );
-                            },
-                          ),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final carWidth = MediaQuery.of(context).size.width * 0.7;
+                          final carHeight = carWidth * 1.5; // Aspect ratio adjustment
                           
-                          // Photo spot buttons
-                          ..._buildPhotoSpots(),
-                        ],
+                          return SizedBox(
+                            width: carWidth,
+                            height: carHeight,
+                            child: Stack(
+                              children: [
+                                // Car image placeholder
+                                Container(
+                                  width: carWidth,
+                                  height: carHeight,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.asset(
+                                      'assets/cartop.png',
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.directions_car, size: 100, color: Colors.grey[400]),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'Car Top View',
+                                              style: GoogleFonts.poppins(color: Colors.grey[600]),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                
+                                // Photo spot buttons
+                                ..._buildPhotoSpots(carWidth, carHeight),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -129,28 +157,35 @@ class _CarPhotosDiagramScreenState extends State<CarPhotosDiagramScreen> {
     );
   }
 
-  List<Widget> _buildPhotoSpots() {
-    // Positions for each photo spot (adjust based on your car image)
-    final positions = [
-      const Offset(0.5, 0.15),   // 1 - Front
-      const Offset(0.75, 0.18),  // 2 - Front Right 3/4
-      const Offset(0.85, 0.45),  // 3 - Rear Right
-      const Offset(0.8, 0.72),   // 4 - Rear Right 3/4
-      const Offset(0.5, 0.82),   // 5 - Rear
-      const Offset(0.2, 0.72),   // 6 - Rear Left 3/4
-      const Offset(0.15, 0.45),  // 7 - Rear Left
-      const Offset(0.25, 0.18),  // 8 - Front Left 3/4
-      const Offset(0.5, 0.4),    // 9 - Front Seats
-      const Offset(0.5, 0.55),   // 10 - Back Seats
-      const Offset(0.5, 0.75),   // 11 - Trunk
-    ];
+  List<Widget> _buildPhotoSpots(double carWidth, double carHeight) {
+    // Adjusted positions based on the screenshot
+   final positions = [
+  const Offset(0.50, 0.09),  // 1 - Front
+
+  const Offset(0.82, 0.17),  // 2 - Front Right 3/4
+  const Offset(0.90, 0.40),  // 3 - Right Side
+  const Offset(0.82, 0.63),  // 4 - Rear Right 3/4
+
+  const Offset(0.50, 0.81),  // 5 - Rear
+
+  const Offset(0.18, 0.63),  // 6 - Rear Left 3/4
+  const Offset(0.10, 0.40),  // 7 - Left Side
+  const Offset(0.18, 0.17),  // 8 - Front Left 3/4
+
+  const Offset(0.50, 0.30),  // 9 - Front Seats
+  const Offset(0.50, 0.46),  // 10 - Back Seats
+  const Offset(0.50, 0.62),  // 11 - Trunk
+];
+
+
+
 
     return List.generate(11, (index) {
       final isUploaded = uploadedPhotos.containsKey(index + 1);
       
       return Positioned(
-        left: positions[index].dx * MediaQuery.of(context).size.width * 0.7 - 20,
-        top: positions[index].dy * 400 - 20,
+        left: positions[index].dx * carWidth - 20,
+        top: positions[index].dy * carHeight - 20,
         child: GestureDetector(
           onTap: () => _navigateToPhotoCapture(index + 1),
           child: Container(
@@ -160,6 +195,13 @@ class _CarPhotosDiagramScreenState extends State<CarPhotosDiagramScreen> {
               color: isUploaded ? Colors.red : Colors.grey,
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Center(
               child: Text(
@@ -178,21 +220,23 @@ class _CarPhotosDiagramScreenState extends State<CarPhotosDiagramScreen> {
   }
 
   void _navigateToPhotoCapture(int spotNumber) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CarPhotoCaptureScreen(
-          photoLabel: photoLabels[spotNumber - 1],
-          spotNumber: spotNumber,
+    // Simulate photo capture
+    await Future.delayed(const Duration(milliseconds: 500));
+    
+    // Mock result - in real app this would come from camera
+    setState(() {
+      uploadedPhotos[spotNumber] = 'photo_$spotNumber.jpg';
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Photo ${photoLabels[spotNumber - 1]} uploaded!',
+          style: GoogleFonts.poppins(),
         ),
+        duration: const Duration(seconds: 1),
       ),
     );
-    
-    if (result != null) {
-      setState(() {
-        uploadedPhotos[spotNumber] = result;
-      });
-    }
   }
 
   void _showSubmitDialog() {
