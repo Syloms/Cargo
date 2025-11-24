@@ -9,7 +9,7 @@ import 'package:cargo/models/user_verification.dart';
 class SelfieScreen extends StatefulWidget {
   final UserVerification verification;
 
-  const SelfieScreen({Key? key, required this.verification}) : super(key: key);
+  const SelfieScreen({super.key, required this.verification});
 
   @override
   State<SelfieScreen> createState() => _SelfieScreenState();

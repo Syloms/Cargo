@@ -160,24 +160,22 @@ class _CarPhotosDiagramScreenState extends State<CarPhotosDiagramScreen> {
   List<Widget> _buildPhotoSpots(double carWidth, double carHeight) {
     // Adjusted positions based on the screenshot
    final positions = [
-  const Offset(0.50, 0.09),  // 1 - Front
+  const Offset(0.50, 0.00),  // 1 - Front (moved even higher)
 
-  const Offset(0.82, 0.17),  // 2 - Front Right 3/4
-  const Offset(0.90, 0.40),  // 3 - Right Side
-  const Offset(0.82, 0.63),  // 4 - Rear Right 3/4
+  const Offset(0.92, 0.10),  // 2 - Front Right 3/4
+  const Offset(0.98, 0.40),  // 3 - Right Side
+  const Offset(0.92, 0.70),  // 4 - Rear Right 3/4
 
-  const Offset(0.50, 0.81),  // 5 - Rear
+  const Offset(0.50, 1.00),  // 5 - Rear (moved lower: almost at bottom)
 
-  const Offset(0.18, 0.63),  // 6 - Rear Left 3/4
-  const Offset(0.10, 0.40),  // 7 - Left Side
-  const Offset(0.18, 0.17),  // 8 - Front Left 3/4
+  const Offset(0.08, 0.70),  // 6 - Rear Left 3/4
+  const Offset(0.02, 0.40),  // 7 - Left Side
+  const Offset(0.08, 0.10),  // 8 - Front Left 3/4
 
-  const Offset(0.50, 0.30),  // 9 - Front Seats
-  const Offset(0.50, 0.46),  // 10 - Back Seats
-  const Offset(0.50, 0.62),  // 11 - Trunk
+  const Offset(0.50, 0.24),  // 9 - Front Seats
+  const Offset(0.50, 0.45),  // 10 - Back Seats
+  const Offset(0.50, 0.75),  // 11 - Trunk
 ];
-
-
 
 
     return List.generate(11, (index) {

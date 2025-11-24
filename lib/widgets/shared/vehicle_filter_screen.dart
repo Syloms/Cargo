@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class VehicleFilterScreen extends StatefulWidget {
-  const VehicleFilterScreen({Key? key}) : super(key: key);
+  const VehicleFilterScreen({super.key});
 
   @override
   State<VehicleFilterScreen> createState() => _VehicleFilterScreenState();
@@ -42,7 +42,7 @@ class _VehicleFilterScreenState extends State<VehicleFilterScreen> {
   TimeOfDay _dropTime = const TimeOfDay(hour: 17, minute: 30);
 
   // Location
-  String _location = '2 km to Chicago 60601 Usa';
+  final String _location = '2 km to Chicago 60601 Usa';
 
   // Colors
   final List<Map<String, dynamic>> _colors = [
@@ -60,7 +60,7 @@ class _VehicleFilterScreenState extends State<VehicleFilterScreen> {
   String _selectedFuelType = 'Electric';
   final List<String> _fuelTypes = ['Electric', 'Petrol', 'Diesel', 'Hybrid'];
 
-  int _resultCount = 100;
+  final int _resultCount = 100;
 
   @override
   Widget build(BuildContext context) {
@@ -621,12 +621,12 @@ class CustomDateTimePicker extends StatefulWidget {
   final TimeOfDay initialDropTime;
   
   const CustomDateTimePicker({
-    Key? key,
+    super.key,
     this.initialPickupDate,
     this.initialDropDate,
     required this.initialPickupTime,
     required this.initialDropTime,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomDateTimePicker> createState() => _CustomDateTimePickerState();

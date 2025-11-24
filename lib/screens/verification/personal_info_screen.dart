@@ -7,7 +7,7 @@ import 'package:cargo/screens/verification/id_upload_screen.dart';
 class PersonalInfoScreen extends StatefulWidget {
   final UserVerification? existingData;
 
-  const PersonalInfoScreen({Key? key, this.existingData}) : super(key: key);
+  const PersonalInfoScreen({super.key, this.existingData});
 
   @override
   State<PersonalInfoScreen> createState() => _PersonalInfoScreenState();

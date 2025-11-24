@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cargo/models/user_verification.dart';
 import 'package:cargo/screens/verification/selfie_screen.dart';
 
 class IDUploadScreen extends StatefulWidget {
   final UserVerification verification;
 
-  const IDUploadScreen({Key? key, required this.verification}) : super(key: key);
+  const IDUploadScreen({super.key, required this.verification});
 
   @override
   State<IDUploadScreen> createState() => _IDUploadScreenState();
@@ -18,6 +20,8 @@ class _IDUploadScreenState extends State<IDUploadScreen> {
   final ImagePicker _picker = ImagePicker();
   File? _frontImage;
   File? _backImage;
+  Uint8List? _frontImageBytes;
+  Uint8List? _backImageBytes;
   String? _selectedIdType;
 
   final List<Map<String, String>> idTypes = [
@@ -39,15 +43,28 @@ class _IDUploadScreenState extends State<IDUploadScreen> {
       );
 
       if (image != null) {
-        setState(() {
-          if (isFront) {
-            _frontImage = File(image.path);
-            widget.verification.idFrontPhoto = image.path;
-          } else {
-            _backImage = File(image.path);
-            widget.verification.idBackPhoto = image.path;
-          }
-        });
+        if (kIsWeb) {
+          final bytes = await image.readAsBytes();
+          setState(() {
+            if (isFront) {
+              _frontImageBytes = Uint8List.fromList(bytes);
+              widget.verification.idFrontPhoto = image.path;
+            } else {
+              _backImageBytes = Uint8List.fromList(bytes);
+              widget.verification.idBackPhoto = image.path;
+            }
+          });
+        } else {
+          setState(() {
+            if (isFront) {
+              _frontImage = File(image.path);
+              widget.verification.idFrontPhoto = image.path;
+            } else {
+              _backImage = File(image.path);
+              widget.verification.idBackPhoto = image.path;
+            }
+          });
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -69,15 +86,28 @@ class _IDUploadScreenState extends State<IDUploadScreen> {
       );
 
       if (image != null) {
-        setState(() {
-          if (isFront) {
-            _frontImage = File(image.path);
-            widget.verification.idFrontPhoto = image.path;
-          } else {
-            _backImage = File(image.path);
-            widget.verification.idBackPhoto = image.path;
-          }
-        });
+        if (kIsWeb) {
+          final bytes = await image.readAsBytes();
+          setState(() {
+            if (isFront) {
+              _frontImageBytes = Uint8List.fromList(bytes);
+              widget.verification.idFrontPhoto = image.path;
+            } else {
+              _backImageBytes = Uint8List.fromList(bytes);
+              widget.verification.idBackPhoto = image.path;
+            }
+          });
+        } else {
+          setState(() {
+            if (isFront) {
+              _frontImage = File(image.path);
+              widget.verification.idFrontPhoto = image.path;
+            } else {
+              _backImage = File(image.path);
+              widget.verification.idBackPhoto = image.path;
+            }
+          });
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -254,7 +284,10 @@ class _IDUploadScreenState extends State<IDUploadScreen> {
   }
 
   Widget _buildUploadSection(String title, bool isFront) {
-    final image = isFront ? _frontImage : _backImage;
+    final hasImage = kIsWeb 
+        ? (isFront ? _frontImageBytes != null : _backImageBytes != null)
+        : (isFront ? _frontImage != null : _backImage != null);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -268,14 +301,26 @@ class _IDUploadScreenState extends State<IDUploadScreen> {
               color: Colors.grey[50],
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: image != null ? const Color(0xFFCDFE3D) : Colors.grey[300]!,
+                color: hasImage ? const Color(0xFFCDFE3D) : Colors.grey[300]!,
                 width: 2,
               ),
             ),
-            child: image != null
+            child: hasImage
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.file(image, width: double.infinity, height: double.infinity, fit: BoxFit.cover),
+                    child: kIsWeb
+                        ? Image.memory(
+                            isFront ? _frontImageBytes! : _backImageBytes!,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.file(
+                            isFront ? _frontImage! : _backImage!,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
                   )
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -292,7 +337,10 @@ class _IDUploadScreenState extends State<IDUploadScreen> {
   }
 
   Widget _buildContinueButton() {
-    final canContinue = _selectedIdType != null && _frontImage != null && _backImage != null;
+    final hasFront = kIsWeb ? _frontImageBytes != null : _frontImage != null;
+    final hasBack = kIsWeb ? _backImageBytes != null : _backImage != null;
+    final canContinue = _selectedIdType != null && hasFront && hasBack;
+    
     return Padding(
       padding: const EdgeInsets.all(24),
       child: SizedBox(
