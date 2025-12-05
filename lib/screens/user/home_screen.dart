@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../widgets/shared/verify_popup.dart';
-import '../owner/dashboard.dart';
-import 'car_list_screen.dart';
+import 'package:cargo/widgets/shared/verify_popup.dart';
+import 'package:cargo/screens/owner/dashboard.dart';
+import 'package:cargo/screens/user/car_list_screen.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onSearchChanged(String query) {
     // Search logic can be implemented here
-    print('Search query: $query');
+    // TODO: Implement search functionality
   }
 
   @override
@@ -113,7 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           GestureDetector(
                             onTap: () {
                               // Filter functionality can be added here
-                              print('Filter tapped');
                             },
                             child: Container(
                               padding: const EdgeInsets.all(8),

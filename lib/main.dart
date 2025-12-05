@@ -15,9 +15,14 @@ class CargoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Cargo',
+      title: 'CarGo Rentals',
       debugShowCheckedModeBanner: false,
-      home:  OnboardingWrapper(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'Plus Jakarta Sans',
+        scaffoldBackgroundColor: Colors.white,
+      ),
+      home: const OnboardingWrapper(),
     );
   }
 }

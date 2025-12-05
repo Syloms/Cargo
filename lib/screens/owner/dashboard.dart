@@ -44,16 +44,16 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
       bottomNavigationBar: _buildBottomNavBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>  CarDetailsScreen(),
-              ),
-    );
-  },
-  backgroundColor: AppColors.accent,
-  child: const Icon(Icons.add, color: Colors.white, size: 32),
-),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const OwnerCarDetailsScreen(),
+            ),
+          );
+        },
+        backgroundColor: AppColors.accent,
+        child: const Icon(Icons.add, color: Colors.white, size: 32),
+      ),
     );
   }
 
@@ -63,7 +63,7 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),

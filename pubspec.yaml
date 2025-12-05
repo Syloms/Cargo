@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -82,6 +82,7 @@ flutter:
     - assets/moto1.jpg
     - assets/license_sample.jpg
     - assets/cartop.png
+    - assets/qr_code.png  # ADDED: QR code image
    
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
