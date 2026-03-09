@@ -1,4 +1,4 @@
-// lib/USERS-UI/Renter/bookings/history/booking_detail_screen.dart
+﻿// lib/USERS-UI/Renter/bookings/history/booking_detail_screen.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -190,15 +190,14 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   Map<String, dynamic>? _lateFeeStatusData;
 
   // Damage report filed by owner against this booking
-  bool _isLoadingDamageReport = false;
   Map<String, dynamic>? _damageReport;
 
-  final String baseUrl = GlobalApiConfig.baseUrl + "/";
+  final String baseUrl = "${GlobalApiConfig.baseUrl}/";
 
   @override
   void initState() {
     super.initState();
-    print('🚀 BookingDetailScreen initState - Booking ID: ${widget.booking.bookingId}, Status: ${widget.booking.status}');
+    debugPrint('🚀 BookingDetailScreen initState - Booking ID: ${widget.booking.bookingId}, Status: ${widget.booking.status}');
     _loadUserIdAndPayment();
     _checkAndStartGpsTracking();
     _checkOverdueStatus();
@@ -364,11 +363,11 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   }
 
   Future<void> _loadUserIdAndPayment() async {
-    print('📱 _loadUserIdAndPayment called');
+    debugPrint('📱 _loadUserIdAndPayment called');
     final prefs = await SharedPreferences.getInstance();
     final loadedUserId = prefs.getString('user_id');
 
-    print('👤 User ID: $loadedUserId');
+    debugPrint('👤 User ID: $loadedUserId');
 
     setState(() {
       userId = loadedUserId;
@@ -376,11 +375,11 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     });
 
     // Fetch both the normal booking payment info and the late-fee-specific payment status
-    print('💳 About to call _fetchPaymentInfo...');
+    debugPrint('💳 About to call _fetchPaymentInfo...');
     await _fetchPaymentInfo();
     await _fetchLateFeeStatus();
     await _fetchDamageReport();
-    print('✅ _fetchPaymentInfo completed');
+    debugPrint('✅ _fetchPaymentInfo completed');
   }
 
   Future<void> _fetchLateFeeStatus() async {
@@ -413,7 +412,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
   Future<void> _fetchDamageReport() async {
     if (userId == null || userId!.isEmpty) return;
-    setState(() => _isLoadingDamageReport = true);
     try {
       final uri = Uri.parse(
         '${GlobalApiConfig.getRenterDamageReportEndpoint}'
@@ -428,8 +426,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       }
     } catch (e) {
       debugPrint('Error fetching damage report: $e');
-    } finally {
-      if (mounted) setState(() => _isLoadingDamageReport = false);
     }
   }
 
@@ -581,43 +577,43 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   }
 
   Future<void> _fetchPaymentInfo() async {
-    print('💳💳💳 _fetchPaymentInfo STARTED for booking ${widget.booking.bookingId}');
+    debugPrint('💳💳💳 _fetchPaymentInfo STARTED for booking ${widget.booking.bookingId}');
     setState(() => _isLoadingPayment = true);
 
     try {
       final url = '${baseUrl}api/payment/get_booking_payment.php?booking_id=${widget.booking.bookingId}';
-      print('🌐 Making request to: $url');
+      debugPrint('🌐 Making request to: $url');
       
       final response = await http.get(Uri.parse(url));
 
-      print('📡 Response Status Code: ${response.statusCode}');
-      print('📡 Response Body: ${response.body}');
+      debugPrint('📡 Response Status Code: ${response.statusCode}');
+      debugPrint('📡 Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print('✅ Decoded JSON: $data');
+        debugPrint('✅ Decoded JSON: $data');
         
         if (data['success'] == true && data['payment'] != null) {
-          print('💳 Payment Data Found: ${data['payment']}');
-          print('💳 Refund Status from API: ${data['payment']['refund_status']}');
-          print('💳 Refund Requested: ${data['payment']['refund_requested']}');
+          debugPrint('💳 Payment Data Found: ${data['payment']}');
+          debugPrint('💳 Refund Status from API: ${data['payment']['refund_status']}');
+          debugPrint('💳 Refund Requested: ${data['payment']['refund_requested']}');
           
           setState(() {
             _paymentData = data['payment'];
-            print('✅ _paymentData SET in state');
+            debugPrint('✅ _paymentData SET in state');
           });
         } else {
-          print('❌ API returned success=false or payment is null');
+          debugPrint('❌ API returned success=false or payment is null');
         }
       } else {
-        print('❌ API returned non-200 status');
+        debugPrint('❌ API returned non-200 status');
       }
     } catch (e) {
-      print('❌❌❌ Error fetching payment info: $e');
+      debugPrint('❌❌❌ Error fetching payment info: $e');
     } finally {
       if (mounted) {
         setState(() => _isLoadingPayment = false);
-        print('✅ _isLoadingPayment = false');
+        debugPrint('✅ _isLoadingPayment = false');
       }
     }
   }
@@ -1507,10 +1503,10 @@ final colors = Theme.of(context).colorScheme;
     final refundStatus = _paymentData?['refund_status'] ?? 'not_requested';
     final hasRefundRequested = refundStatus != 'not_requested' && refundStatus.isNotEmpty;
     
-    print('🔍 Building Refund Button:');
-    print('   Payment Data: $_paymentData');
-    print('   Refund Status: $refundStatus');
-    print('   Has Refund Requested: $hasRefundRequested');
+    debugPrint('🔍 Building Refund Button:');
+    debugPrint('   Payment Data: $_paymentData');
+    debugPrint('   Refund Status: $refundStatus');
+    debugPrint('   Has Refund Requested: $hasRefundRequested');
     
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -1628,6 +1624,7 @@ final colors = Theme.of(context).colorScheme;
           : '${ownerId}_$currentUserId';
 
       // Navigate to chat screen
+      if (!mounted) return;
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -1750,10 +1747,11 @@ final colors = Theme.of(context).colorScheme;
                 userId: userId!,
               );
 
-              Navigator.pop(context);
+              if (!mounted) return;
+              Navigator.pop(this.context);
 
               if (result['success'] == true) {
-                ScaffoldMessenger.of(context).showSnackBar(
+                ScaffoldMessenger.of(this.context).showSnackBar(
                   SnackBar(
                     content: Text(result['message'] ?? 'Booking cancelled successfully. GPS tracking stopped.'),
                     backgroundColor: Colors.green,
@@ -1761,9 +1759,9 @@ final colors = Theme.of(context).colorScheme;
                 );
 
                 _bookingChanged = true;
-                Navigator.pop(context, true);
+                Navigator.pop(this.context, true);
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
+                ScaffoldMessenger.of(this.context).showSnackBar(
                   SnackBar(
                     content: Text(result['message'] ?? 'Failed to cancel booking'),
                     backgroundColor: Colors.red,

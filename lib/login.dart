@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:cargo/config/api_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -136,10 +136,10 @@ class _LoginPageState extends State<LoginPage> {
 
     final url = Uri.parse(GlobalApiConfig.loginEndpoint);
 
-    print("Sending JSON -> email: $email, password: $password");
+    debugPrint("Sending JSON -> email: $email, password: $password");
 
     try {
-      print("LOGIN URL -> ${GlobalApiConfig.loginEndpoint}");
+      debugPrint("LOGIN URL -> ${GlobalApiConfig.loginEndpoint}");
 
       final response = await http.post(
         url,
@@ -150,8 +150,8 @@ class _LoginPageState extends State<LoginPage> {
         }),
       );
 
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      debugPrint("Response status: ${response.statusCode}");
+      debugPrint("Response body: ${response.body}");
 
       // ✅ Parse response for both success (200) and error responses (400, 404, etc.)
       final responseData = jsonDecode(response.body);
@@ -274,7 +274,7 @@ class _LoginPageState extends State<LoginPage> {
         }
       }
     } catch (e) {
-      print("Error: $e");
+      debugPrint("Error: $e");
       if (mounted) LoadingDialog.hide(context);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -347,10 +347,10 @@ class _LoginPageState extends State<LoginPage> {
           "online": true,
           "createdAt": FieldValue.serverTimestamp(),
         });
-        print("🔥 Firestore user CREATED in background");
+        debugPrint("🔥 Firestore user CREATED in background");
       } else {
         // Update existing user - do both operations in parallel
-        print("✔ Firestore user already exists → updating status");
+        debugPrint("✔ Firestore user already exists → updating status");
         
         final futures = <Future>[];
         
@@ -366,10 +366,10 @@ class _LoginPageState extends State<LoginPage> {
           FirebaseMessaging.instance.getToken().then((token) {
             if (token != null) {
               userRef.update({"fcm": token});
-              print("📩 FCM Token Updated: $token");
+              debugPrint("📩 FCM Token Updated: $token");
             }
           }).catchError((e) {
-            print("❌ Failed to save FCM Token: $e");
+            debugPrint("❌ Failed to save FCM Token: $e");
           })
         );
 
@@ -377,7 +377,7 @@ class _LoginPageState extends State<LoginPage> {
         await Future.wait(futures);
       }
     } catch (e) {
-      print("❌ Firebase background update error: $e");
+      debugPrint("❌ Firebase background update error: $e");
       // Don't show error to user - this is background operation
     }
   }
@@ -394,6 +394,7 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       if (result.containsKey('error')) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Google Sign-In failed: ${result['error']}')),
         );
@@ -409,11 +410,13 @@ class _LoginPageState extends State<LoginPage> {
         _navigateToHome(userData['role']);
       } else {
         // success: false with no error key (unexpected state)
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(result['error']?.toString() ?? 'Sign-in failed. Please try again.')),
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Sign-in error: $e')),
       );
@@ -464,6 +467,7 @@ class _LoginPageState extends State<LoginPage> {
 
     setState(() => _isGoogleSigningIn = false);
 
+    if (!mounted) return;
     if (result != null && result['success'] == true) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Account created successfully!')),
@@ -561,7 +565,7 @@ class _LoginPageState extends State<LoginPage> {
     int step = 0; // 0=email, 1=code+new password
     bool isLoading = false;
 
-    bool _isValidEmail(String v) {
+    bool isValidEmail(String v) {
       final email = v.trim();
       return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email);
     }
@@ -574,7 +578,7 @@ class _LoginPageState extends State<LoginPage> {
           builder: (context, setState) {
             Future<void> runRequest() async {
               final email = emailController.text.trim().toLowerCase();
-              if (email.isEmpty || !_isValidEmail(email)) {
+              if (email.isEmpty || !isValidEmail(email)) {
                 ScaffoldMessenger.of(this.context).showSnackBar(
                   const SnackBar(content: Text('Please enter a valid email address.')),
                 );
@@ -586,10 +590,12 @@ class _LoginPageState extends State<LoginPage> {
                 final res = await _requestPasswordReset(email);
                 setState(() => step = 1);
 
+                if (!mounted) return;
                 ScaffoldMessenger.of(this.context).showSnackBar(
                   SnackBar(content: Text(res['message'] ?? 'Reset code sent to your email.')),
                 );
               } catch (e) {
+                if (!mounted) return;
                 ScaffoldMessenger.of(this.context).showSnackBar(
                   SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
                 );
@@ -609,7 +615,7 @@ class _LoginPageState extends State<LoginPage> {
               final newPass = newPasswordController.text;
               final confirmPass = confirmPasswordController.text;
 
-              if (email.isEmpty || !_isValidEmail(email)) {
+              if (email.isEmpty || !isValidEmail(email)) {
                 ScaffoldMessenger.of(this.context).showSnackBar(
                   const SnackBar(content: Text('Please go back and enter a valid email.')),
                 );
@@ -647,12 +653,14 @@ class _LoginPageState extends State<LoginPage> {
               setState(() => isLoading = true);
               try {
                 final res = await _resetPassword(email: email, code: code, newPassword: newPass);
-                if (Navigator.canPop(dialogContext)) Navigator.pop(dialogContext);
+                if (!mounted) return;
+                if (dialogContext.mounted && Navigator.canPop(dialogContext)) Navigator.pop(dialogContext);
 
                 ScaffoldMessenger.of(this.context).showSnackBar(
                   SnackBar(content: Text(res['message'] ?? 'Password reset successful.')),
                 );
               } catch (e) {
+                if (!mounted) return;
                 ScaffoldMessenger.of(this.context).showSnackBar(
                   SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
                 );

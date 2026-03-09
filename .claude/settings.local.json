@@ -7,7 +7,11 @@
       "Read(//c/Program Files/Android/Android Studio/jre/bin/**)",
       "Bash(\"/c/Program Files/Android/Android Studio/jbr/bin/keytool\" -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android)",
       "Bash(xargs grep -l \"damage_report\")",
-      "Bash(xargs grep -l \"security_deposit\")"
+      "Bash(xargs grep -l \"security_deposit\")",
+      "Bash(flutter analyze)",
+      "Bash(dart analyze)",
+      "Bash(sed 's/.*error - //')",
+      "Bash(sed 's/:[0-9]*:[0-9]* - .*//')"
     ]
   }
 }

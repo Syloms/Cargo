@@ -1,8 +1,10 @@
-// ========================================
+﻿// ========================================
 // GLOBAL API CONFIGURATION
 // ========================================
 // This file centralizes all API endpoint configurations
 // Change the domain here to switch between development and production
+
+import 'package:flutter/foundation.dart';
 
 class GlobalApiConfig {
   // ========================================
@@ -231,13 +233,13 @@ class GlobalApiConfig {
   // DEBUG INFO
   // ========================================
   static void printConfig() {
-    print('========================================');
-    print('API CONFIGURATION');
-    print('========================================');
-    print('Environment: ${isDevelopment ? "DEVELOPMENT" : "PRODUCTION"}');
-    print('Base URL: $baseUrl');
-    print('API URL: $apiUrl');
-    print('Uploads URL: $uploadsUrl');
-    print('========================================');
+    debugPrint('========================================');
+    debugPrint('API CONFIGURATION');
+    debugPrint('========================================');
+    debugPrint('Environment: ${isDevelopment ? "DEVELOPMENT" : "PRODUCTION"}');
+    debugPrint('Base URL: $baseUrl');
+    debugPrint('API URL: $apiUrl');
+    debugPrint('Uploads URL: $uploadsUrl');
+    debugPrint('========================================');
   }
 }

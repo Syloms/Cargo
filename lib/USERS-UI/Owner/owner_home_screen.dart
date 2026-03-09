@@ -1,0 +1,13 @@
+// Stub file for OwnerHomeScreen
+import 'package:flutter/material.dart';
+
+class OwnerHomeScreen extends StatelessWidget {
+  const OwnerHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: Text('Owner Home')),
+    );
+  }
+}

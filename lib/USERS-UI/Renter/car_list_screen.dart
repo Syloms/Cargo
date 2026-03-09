@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
@@ -152,7 +152,7 @@ class _CarListScreenState extends State<CarListScreen> {
             }
           }
         } catch (jsonError) {
-          print("❌ JSON decode error: $jsonError");
+          debugPrint("❌ JSON decode error: $jsonError");
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Error loading car data')),
@@ -160,10 +160,10 @@ class _CarListScreenState extends State<CarListScreen> {
           }
         }
       } else {
-        print("❌ HTTP error: ${res.statusCode}");
+        debugPrint("❌ HTTP error: ${res.statusCode}");
       }
     } catch (e) {
-      print("❌ ERROR LOADING CARS: $e");
+      debugPrint("❌ ERROR LOADING CARS: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -217,21 +217,37 @@ class _CarListScreenState extends State<CarListScreen> {
     int count = 0;
     if (_activeFilters != null) {
       if (_activeFilters!['location'] != null && 
-          _activeFilters!['location'].toString().isNotEmpty) count++;
+          _activeFilters!['location'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['vehicleType'] != null && 
-          _activeFilters!['vehicleType'].toString().isNotEmpty) count++;
+          _activeFilters!['vehicleType'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['deliveryMethod'] != null && 
-          _activeFilters!['deliveryMethod'].toString().isNotEmpty) count++;
+          _activeFilters!['deliveryMethod'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['transmission'] != null && 
-          _activeFilters!['transmission'].toString().isNotEmpty) count++;
+          _activeFilters!['transmission'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['fuelType'] != null && 
-          _activeFilters!['fuelType'].toString().isNotEmpty) count++;
+          _activeFilters!['fuelType'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['bodyStyle'] != null && 
-          _activeFilters!['bodyStyle'].toString().isNotEmpty) count++;
+          _activeFilters!['bodyStyle'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['brand'] != null && 
-          _activeFilters!['brand'].toString().isNotEmpty) count++;
+          _activeFilters!['brand'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['year'] != null && 
-          _activeFilters!['year'].toString().isNotEmpty) count++;
+          _activeFilters!['year'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['seats'] != null && _activeFilters!['seats'] > 0) count++;
       
       double minPrice = (_activeFilters!['minPrice'] ?? 0).toDouble();
@@ -367,20 +383,19 @@ class _CarListScreenState extends State<CarListScreen> {
 
               final success = await _savedSearchService.saveSearch(name, _activeFilters!);
 
-              if (mounted) {
-                Navigator.pop(context);
-                if (success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Search saved successfully!'),
-                      backgroundColor: AppColors.success,
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('A search with this name already exists')),
-                  );
-                }
+              if (!mounted) return;
+              Navigator.pop(this.context);
+              if (success) {
+                ScaffoldMessenger.of(this.context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Search saved successfully!'),
+                    backgroundColor: AppColors.success,
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(this.context).showSnackBar(
+                  const SnackBar(content: Text('A search with this name already exists')),
+                );
               }
             },
             style: ElevatedButton.styleFrom(
@@ -1001,7 +1016,7 @@ class _CarListScreenState extends State<CarListScreen> {
                   children: [
                     // Price
                     Text(
-                      "₱${price}",
+                      "₱$price",
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

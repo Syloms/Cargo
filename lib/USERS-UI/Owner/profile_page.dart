@@ -469,7 +469,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                         await Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => EditProfileScreen(
-                            api: GlobalApiConfig.baseUrl + '/api/update_profile.php',
+                            api: '${GlobalApiConfig.baseUrl}/api/update_profile.php',
                           )),
                         );
                         loadUserData();
@@ -525,10 +525,10 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                           SharedPreferences prefs = await SharedPreferences.getInstance();
                           int ownerId = int.tryParse(prefs.getString("user_id") ?? "0") ?? 0;
                           String ownerName = prefs.getString("fullname") ?? "User";
-                          
+
                           if (!mounted) return;
                           Navigator.push(
-                            context,
+                            this.context,
                             MaterialPageRoute(
                               builder: (_) => AnalyticsDashboardScreen(
                                 ownerId: ownerId,
@@ -748,7 +748,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (_) => EditProfileScreen(
-                                  api: GlobalApiConfig.baseUrl + '/api/update_profile.php',
+                                  api: '${GlobalApiConfig.baseUrl}/api/update_profile.php',
                                 )),
                               );
                               loadUserData();
@@ -799,10 +799,10 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                         onTap: () async {
                           SharedPreferences prefs = await SharedPreferences.getInstance();
                           int ownerId = int.tryParse(prefs.getString("user_id") ?? "0") ?? 0;
-                          
+
                           if (!mounted) return;
                           Navigator.push(
-                            context,
+                            this.context,
                             MaterialPageRoute(
                               builder: (_) => OwnerInsuranceScreen(ownerId: ownerId),
                             ),

@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
@@ -100,15 +100,15 @@ class _MotorcycleListScreenState extends State<MotorcycleListScreen> {
     try {
       final res = await http.get(Uri.parse(url));
       
-      print("🔍 Motorcycle API Response Status: ${res.statusCode}");
-      print("🔍 Motorcycle API Response Body (first 200 chars): ${res.body.substring(0, res.body.length > 200 ? 200 : res.body.length)}");
+      debugPrint("🔍 Motorcycle API Response Status: ${res.statusCode}");
+      debugPrint("🔍 Motorcycle API Response Body (first 200 chars): ${res.body.substring(0, res.body.length > 200 ? 200 : res.body.length)}");
 
       if (res.statusCode == 200) {
         try {
           final data = jsonDecode(res.body);
           
           if (data['status'] == 'error') {
-            print("❌ API Error: ${data['message']}");
+            debugPrint("❌ API Error: ${data['message']}");
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Error: ${data['message']}')),
@@ -126,8 +126,8 @@ class _MotorcycleListScreenState extends State<MotorcycleListScreen> {
             }
           }
         } catch (jsonError) {
-          print("❌ JSON Decode Error: $jsonError");
-          print("❌ Response body: ${res.body}");
+          debugPrint("❌ JSON Decode Error: $jsonError");
+          debugPrint("❌ Response body: ${res.body}");
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Invalid server response. Please check API.')),
@@ -135,10 +135,10 @@ class _MotorcycleListScreenState extends State<MotorcycleListScreen> {
           }
         }
       } else {
-        print("❌ HTTP Error: ${res.statusCode}");
+        debugPrint("❌ HTTP Error: ${res.statusCode}");
       }
     } catch (e) {
-      print("❌ ERROR LOADING MOTORCYCLES: $e");
+      debugPrint("❌ ERROR LOADING MOTORCYCLES: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Network error: $e')),
@@ -187,19 +187,33 @@ class _MotorcycleListScreenState extends State<MotorcycleListScreen> {
     int count = 0;
     if (_activeFilters != null) {
       if (_activeFilters!['location'] != null && 
-          _activeFilters!['location'].toString().isNotEmpty) count++;
+          _activeFilters!['location'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['deliveryMethod'] != null && 
-          _activeFilters!['deliveryMethod'].toString().isNotEmpty) count++;
+          _activeFilters!['deliveryMethod'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['transmission'] != null && 
-          _activeFilters!['transmission'].toString().isNotEmpty) count++;
+          _activeFilters!['transmission'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['bodyStyle'] != null && 
-          _activeFilters!['bodyStyle'].toString().isNotEmpty) count++;
+          _activeFilters!['bodyStyle'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['brand'] != null && 
-          _activeFilters!['brand'].toString().isNotEmpty) count++;
+          _activeFilters!['brand'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['year'] != null && 
-          _activeFilters!['year'].toString().isNotEmpty) count++;
+          _activeFilters!['year'].toString().isNotEmpty) {
+        count++;
+      }
       if (_activeFilters!['engineSize'] != null && 
-          _activeFilters!['engineSize'].toString().isNotEmpty) count++;
+          _activeFilters!['engineSize'].toString().isNotEmpty) {
+        count++;
+      }
       
       double minPrice = (_activeFilters!['minPrice'] ?? 0).toDouble();
       double maxPrice = (_activeFilters!['maxPrice'] ?? 5000).toDouble();
@@ -826,7 +840,7 @@ final colors = Theme.of(context).colorScheme;
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "₱${price}",
+                      "₱$price",
                       style: GoogleFonts.poppins(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,

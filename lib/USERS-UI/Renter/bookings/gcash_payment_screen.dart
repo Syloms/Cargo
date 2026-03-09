@@ -62,7 +62,7 @@ class _GCashPaymentScreenState extends State<GCashPaymentScreen> {
   String? _transactionId;
 
   final String gcashQRCodeUrl = "assets/qr.jpg";
-  final String baseUrl = GlobalApiConfig.baseUrl + "/";
+  final String baseUrl = '${GlobalApiConfig.baseUrl}/';
 
   @override
   void initState() {

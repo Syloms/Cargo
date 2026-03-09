@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Test - Booking #41</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .result {
+            margin-top: 16px;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            color: #1b5e20;
+        }
+        .error {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            color: #c62828;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .status.good {
+            background: #4caf50;
+            color: white;
+        }
+        .status.bad {
+            background: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🧪 GPS Tracking Test - Booking #41</h1>
+            <p>Test and fix GPS tracking for your booking</p>
+        </div>
+
+        <div class="card">
+            <h2>Step 1: Check Database</h2>
+            <button onclick="checkDatabase()">Check GPS Data in Database</button>
+            <div id="db-result"></div>
+        </div>
+
+        <div class="card">
+            <h2>Step 2: Insert Test Data</h2>
+            <button onclick="insertTestData()">Insert 20 Test GPS Records</button>
+            <div id="insert-result"></div>
+        </div>
+
+        <div class="card">
+            <h2>Step 3: Test Current Location API</h2>
+            <button onclick="testCurrentLocation()">Test get_current_location.php</button>
+            <div id="current-result"></div>
+        </div>
+
+        <div class="card">
+            <h2>Step 4: Test Location History API</h2>
+            <button onclick="testLocationHistory()">Test get_location_history.php</button>
+            <div id="history-result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/carGOAdmin/api/GPS_tracking/';
+        const BOOKING_ID = 41;
+
+        function showResult(elementId, message, type = 'success') {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.textContent = message;
+        }
+
+        async function checkDatabase() {
+            try {
+                const response = await fetch(`${API_BASE}check_gps_data.php`);
+                const data = await response.json();
+                
+                let message = '📊 DATABASE CHECK:\n\n';
+                message += `Total GPS Records: ${data.total_records}\n`;
+                message += `Records for Booking #41: ${data.booking_41_records}\n`;
+                message += `Records (Last 24h): ${data.recent_24h_records}\n\n`;
+                
+                if (data.booking_41_records === 0) {
+                    message += '⚠️ WARNING: No GPS data for booking #41!\n';
+                    message += '→ Click "Insert Test Data" to fix this.\n';
+                    showResult('db-result', message, 'error');
+                } else {
+                    message += '✅ GPS data exists for booking #41\n';
+                    message += '\nSample records:\n';
+                    message += JSON.stringify(data.sample_records, null, 2);
+                    showResult('db-result', message, 'success');
+                }
+            } catch (e) {
+                showResult('db-result', '❌ Error: ' + e.message, 'error');
+            }
+        }
+
+        async function insertTestData() {
+            try {
+                const response = await fetch(`${API_BASE}insert_test_gps_booking_41.php`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                let message = '';
+                if (data.success) {
+                    message = `✅ SUCCESS!\n\n`;
+                    message += `${data.message}\n\n`;
+                    message += `Sample locations:\n`;
+                    message += JSON.stringify(data.sample_data, null, 2);
+                    message += '\n\n📱 Now test the Live Tracking in your app!';
+                    showResult('insert-result', message, 'success');
+                    
+                    // Auto-refresh database check
+                    setTimeout(checkDatabase, 500);
+                } else {
+                    showResult('insert-result', '❌ Error: ' + data.message, 'error');
+                }
+            } catch (e) {
+                showResult('insert-result', '❌ Error: ' + e.message, 'error');
+            }
+        }
+
+        async function testCurrentLocation() {
+            try {
+                const url = `${API_BASE}get_current_location.php?booking_id=${BOOKING_ID}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                let message = `📡 API TEST: get_current_location.php\n`;
+                message += `URL: ${url}\n\n`;
+                message += `Response:\n${JSON.stringify(data, null, 2)}`;
+                
+                if (data.success && data.location) {
+                    message += '\n\n✅ API is working! Location data returned.';
+                    showResult('current-result', message, 'success');
+                } else {
+                    message += '\n\n⚠️ No location data returned.';
+                    showResult('current-result', message, 'error');
+                }
+            } catch (e) {
+                showResult('current-result', '❌ Error: ' + e.message, 'error');
+            }
+        }
+
+        async function testLocationHistory() {
+            try {
+                const url = `${API_BASE}get_location_history.php?booking_id=${BOOKING_ID}&limit=50`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                let message = `📡 API TEST: get_location_history.php\n`;
+                message += `URL: ${url}\n\n`;
+                message += `Response:\n${JSON.stringify(data, null, 2)}`;
+                
+                if (data.success && data.history && data.history.length > 0) {
+                    message += `\n\n✅ Found ${data.history.length} location records!`;
+                    showResult('history-result', message, 'success');
+                } else {
+                    message += '\n\n⚠️ No location history returned.';
+                    showResult('history-result', message, 'error');
+                }
+            } catch (e) {
+                showResult('history-result', '❌ Error: ' + e.message, 'error');
+            }
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            setTimeout(checkDatabase, 500);
+        });
+    </script>
+</body>
+</html>

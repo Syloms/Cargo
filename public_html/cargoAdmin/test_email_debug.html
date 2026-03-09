@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Email Debug</title>
+</head>
+<body>
+    <h1>Test Insurance Email Debug</h1>
+    <p>Policy ID: <input type="number" id="policyId" value="1"></p>
+    <button onclick="testEmail()">Test Email Endpoint</button>
+    <pre id="result"></pre>
+
+    <script>
+    function testEmail() {
+        const policyId = document.getElementById('policyId').value;
+        
+        fetch('api/insurance/send_policy_email.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ policy_id: policyId })
+        })
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('result').textContent = data;
+            console.log('Response:', data);
+        })
+        .catch(error => {
+            document.getElementById('result').textContent = 'Error: ' + error;
+            console.error('Error:', error);
+        });
+    }
+    </script>
+</body>
+</html>

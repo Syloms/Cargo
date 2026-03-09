@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #1a1a1a;
+            padding-bottom: 20px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+        .receipt-title {
+            font-size: 24px;
+            color: #666;
+            margin-top: 10px;
+        }
+        .info-section {
+            margin: 20px 0;
+        }
+        .info-row {
+            display: table;
+            width: 100%;
+            margin: 5px 0;
+        }
+        .info-label {
+            display: table-cell;
+            width: 40%;
+            font-weight: bold;
+        }
+        .info-value {
+            display: table-cell;
+            width: 60%;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+            color: #1a1a1a;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        .total-row {
+            font-weight: bold;
+            font-size: 16px;
+            background-color: #f5f5f5;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">CarGo</div>
+        <div class="receipt-title">PAYMENT RECEIPT</div>
+    </div>
+
+    <div class="info-section">
+        <div class="section-title">Receipt Information</div>
+        <div class="info-row">
+            <div class="info-label">Receipt No:</div>
+            <div class="info-value">{{RECEIPT_NO}}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Booking ID:</div>
+            <div class="info-value">{{BOOKING_ID}}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Date Issued:</div>
+            <div class="info-value">{{DATE_ISSUED}}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Status:</div>
+            <div class="info-value"><span class="status-badge">{{STATUS}}</span></div>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <div class="section-title">Renter Information</div>
+        <div class="info-row">
+            <div class="info-label">Name:</div>
+            <div class="info-value">{{RENTER_NAME}}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Email:</div>
+            <div class="info-value">{{RENTER_EMAIL}}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Contact:</div>
+            <div class="info-value">{{RENTER_CONTACT}}</div>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <div class="section-title">Rental Details</div>
+        <table>
+            <tr>
+                <th>Description</th>
+                <th>Details</th>
+            </tr>
+            <tr>
+                <td>Vehicle</td>
+                <td>{{CAR_NAME}}</td>
+            </tr>
+            <tr>
+                <td>Pickup Date & Time</td>
+                <td>{{PICKUP_DATETIME}}</td>
+            </tr>
+            <tr>
+                <td>Return Date & Time</td>
+                <td>{{RETURN_DATETIME}}</td>
+            </tr>
+            <tr>
+                <td>Rental Duration</td>
+                <td>{{DURATION}}</td>
+            </tr>
+            <tr>
+                <td>Daily Rate</td>
+                <td>₱{{DAILY_RATE}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="info-section">
+        <div class="section-title">Payment Summary</div>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Amount</th>
+            </tr>
+            <tr>
+                <td>Base Rental Fee</td>
+                <td>₱{{BASE_AMOUNT}}</td>
+            </tr>
+            {{ADDITIONAL_FEES}}
+            <tr class="total-row">
+                <td>Total Amount</td>
+                <td>₱{{TOTAL_AMOUNT}}</td>
+            </tr>
+            <tr>
+                <td>Payment Method</td>
+                <td>{{PAYMENT_METHOD}}</td>
+            </tr>
+            <tr>
+                <td>Payment Reference</td>
+                <td>{{PAYMENT_REFERENCE}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for choosing CarGo!</p>
+        <p>This is a computer-generated receipt and does not require a signature.</p>
+        <p>For inquiries, please contact support@cargo.ph</p>
+    </div>
+</body>
+</html>

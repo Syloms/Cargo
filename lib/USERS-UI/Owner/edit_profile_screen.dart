@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -104,7 +104,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
 
       // ✅ CRITICAL: Check if user cancelled
       if (picked == null) {
-        print("📷 User cancelled image selection");
+        debugPrint("📷 User cancelled image selection");
         return;
       }
 
@@ -122,8 +122,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       
       setState(() => hasChanges = true);
     } catch (e, stackTrace) {
-      print("❌ Error picking image: $e");
-      print("Stack trace: $stackTrace");
+      debugPrint("❌ Error picking image: $e");
+      debugPrint("Stack trace: $stackTrace");
       
       if (!mounted) return;
       
@@ -267,8 +267,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       );
     } finally {
       // ✅ CRASH FIX: Check mounted before setState
-      if (!mounted) return;
-      setState(() => saving = false);
+      if (mounted) setState(() => saving = false);
     }
   }
 

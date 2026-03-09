@@ -114,7 +114,7 @@ class _CarDetailPageState extends State<CarDetailPage> {
             Image.network(
               imageUrl,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
+              errorBuilder: (_, _, _) => Container(
                 color: Colors.grey.shade300,
                 child: Icon(Icons.directions_car, size: 80, color: Colors.grey.shade500),
               ),

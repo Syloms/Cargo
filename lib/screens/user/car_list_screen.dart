@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cargo/screens/user/car_detail_screen.dart';
 
 class CarListScreen extends StatefulWidget {
-  const CarListScreen({Key? key}) : super(key: key);
+  const CarListScreen({super.key});
 
   @override
   State<CarListScreen> createState() => _CarListScreenState();

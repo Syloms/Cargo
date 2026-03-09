@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,7 +26,7 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
   
   List<Map<String, dynamic>> _notifications = [];
   List<Map<String, dynamic>> _filteredNotifications = [];
-  Map<String, List<Map<String, dynamic>>> _grouped = {};
+  final Map<String, List<Map<String, dynamic>>> _grouped = {};
 
   final AudioPlayer player = AudioPlayer();
   int? _loadedUserId;
@@ -97,7 +97,7 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
     }
 
     _loadedUserId ??= widget.userId;
-    print("🔥 Loaded user_id: $_loadedUserId");
+    debugPrint("🔥 Loaded user_id: $_loadedUserId");
 
     _loadInitialNotifications();
   }
@@ -318,7 +318,7 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
     try {
       await player.play(AssetSource("notification_sound.mp3"));
     } catch (e) {
-      print("Sound play error: $e");
+      debugPrint("Sound play error: $e");
     }
   }
 

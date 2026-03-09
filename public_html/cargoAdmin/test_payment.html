@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Payment Verification</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #0f0;
+        }
+        .container {
+            background: #000;
+            border: 2px solid #0f0;
+            padding: 30px;
+            border-radius: 8px;
+        }
+        h1 {
+            color: #0f0;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #0a0a0a;
+            border-left: 4px solid #0f0;
+        }
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            margin: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #0a0;
+        }
+        input {
+            background: #1a1a1a;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 8px;
+            margin: 5px;
+            font-family: 'Courier New', monospace;
+        }
+        #output {
+            background: #0a0a0a;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid #0f0;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success { color: #0f0; }
+        .error { color: #f00; }
+        .info { color: #ff0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Payment Verification API Tester</h1>
+        
+        <div class="test-section">
+            <h3>Test Verify Payment</h3>
+            <p>Payment ID: <input type="number" id="paymentId" value="1" min="1"></p>
+            <button onclick="testVerify()">✓ Test Verify</button>
+            <button onclick="testReject()">✗ Test Reject</button>
+            <button onclick="testEndpoint()">🔌 Test Endpoint Connection</button>
+        </div>
+
+        <div class="test-section">
+            <h3>API Response:</h3>
+            <div id="output">No tests run yet...</div>
+        </div>
+    </div>
+
+    <script>
+        const outputDiv = document.getElementById('output');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            outputDiv.innerHTML += `<div class="${type}">[${timestamp}] ${message}</div>`;
+            outputDiv.scrollTop = outputDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            outputDiv.innerHTML = '';
+        }
+
+        async function testEndpoint() {
+            clearLog();
+            log('Testing endpoint connection...', 'info');
+
+            try {
+                const response = await fetch('api/payment/verify_payment.php', {
+                    method: 'POST',
+                    body: new FormData() // Empty form data
+                });
+
+                log(`Response Status: ${response.status}`, 'info');
+                log(`Response Headers: ${JSON.stringify([...response.headers])}`, 'info');
+
+                const text = await response.text();
+                log(`Raw Response: ${text}`, 'info');
+
+                try {
+                    const json = JSON.parse(text);
+                    log('JSON Parse: SUCCESS', 'success');
+                    log(`Parsed Data: ${JSON.stringify(json, null, 2)}`, 'info');
+                } catch (e) {
+                    log(`JSON Parse: FAILED - ${e.message}`, 'error');
+                }
+
+            } catch (error) {
+                log(`Connection Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testVerify() {
+            clearLog();
+            const paymentId = document.getElementById('paymentId').value;
+            
+            log(`Testing VERIFY for Payment #${paymentId}...`, 'info');
+
+            const formData = new FormData();
+            formData.append('payment_id', paymentId);
+            formData.append('action', 'verify');
+
+            try {
+                const response = await fetch('api/payment/verify_payment.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                log(`Response Status: ${response.status}`, 'info');
+
+                const text = await response.text();
+                log(`Raw Response:\n${text}`, 'info');
+
+                try {
+                    const data = JSON.parse(text);
+                    if (data.success) {
+                        log('✓ VERIFY SUCCESS!', 'success');
+                        log(`Message: ${data.message}`, 'success');
+                        if (data.data) {
+                            log(`Data: ${JSON.stringify(data.data, null, 2)}`, 'info');
+                        }
+                    } else {
+                        log('✗ VERIFY FAILED', 'error');
+                        log(`Error: ${data.message}`, 'error');
+                    }
+                } catch (e) {
+                    log(`JSON Parse Error: ${e.message}`, 'error');
+                }
+
+            } catch (error) {
+                log(`Request Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testReject() {
+            clearLog();
+            const paymentId = document.getElementById('paymentId').value;
+            
+            log(`Testing REJECT for Payment #${paymentId}...`, 'info');
+
+            const formData = new FormData();
+            formData.append('payment_id', paymentId);
+            formData.append('action', 'reject');
+            formData.append('reason', 'Test rejection');
+
+            try {
+                const response = await fetch('api/payment/verify_payment.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                log(`Response Status: ${response.status}`, 'info');
+
+                const text = await response.text();
+                log(`Raw Response:\n${text}`, 'info');
+
+                try {
+                    const data = JSON.parse(text);
+                    if (data.success) {
+                        log('✓ REJECT SUCCESS!', 'success');
+                        log(`Message: ${data.message}`, 'success');
+                    } else {
+                        log('✗ REJECT FAILED', 'error');
+                        log(`Error: ${data.message}`, 'error');
+                    }
+                } catch (e) {
+                    log(`JSON Parse Error: ${e.message}`, 'error');
+                }
+
+            } catch (error) {
+                log(`Request Error: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

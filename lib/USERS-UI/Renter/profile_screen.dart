@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'widgets/bottom_nav_bar.dart';
@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
       address = prefs.getString("address") ?? "";
       profileImage = prefs.getString("profile_image") ?? "";
       isVerified = prefs.getString("is_verified") == "1";
-      print("PROFILE IMAGE FROM PREFS → $profileImage");
+      debugPrint("PROFILE IMAGE FROM PREFS → $profileImage");
     });
   }
 

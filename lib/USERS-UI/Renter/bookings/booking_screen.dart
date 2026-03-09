@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -168,10 +168,10 @@ class _BookingScreenState extends State<BookingScreen> {
   // Replace your _checkVerificationOnInit() method with this improved version:
 
   Future<void> _checkVerificationOnInit() async {
-    print("[VERIFY] Starting verification check...");
+    debugPrint("[VERIFY] Starting verification check...");
 
     if (widget.userId == null || widget.userId!.isEmpty) {
-      print("[ERROR] No user ID provided");
+      debugPrint("[ERROR] No user ID provided");
       setState(() {
         isCheckingVerification = false;
         isVerifiedUser = false;
@@ -180,14 +180,14 @@ class _BookingScreenState extends State<BookingScreen> {
       return;
     }
 
-    print("[VERIFY] User ID: ${widget.userId}");
+    debugPrint("[VERIFY] User ID: ${widget.userId}");
 
     try {
       final url = Uri.parse(
         "${GlobalApiConfig.checkVerificationEndpoint}?user_id=${widget.userId}",
       );
 
-      print("[HTTP] Calling API: $url");
+      debugPrint("[HTTP] Calling API: $url");
 
       final response = await http
           .get(url)
@@ -198,20 +198,20 @@ class _BookingScreenState extends State<BookingScreen> {
             },
           );
 
-      print("[HTTP] Response Status: ${response.statusCode}");
-      print("[HTTP] Response Body: ${response.body}");
+      debugPrint("[HTTP] Response Status: ${response.statusCode}");
+      debugPrint("[HTTP] Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
 
         // Debug: Print the exact response
-        print("[VERIFY] Parsed JSON: $result");
-        print("[VERIFY] is_verified value: ${result['is_verified']}");
-        print(
+        debugPrint("[VERIFY] Parsed JSON: $result");
+        debugPrint("[VERIFY] is_verified value: ${result['is_verified']}");
+        debugPrint(
           "[VERIFY] is_verified type: ${result['is_verified'].runtimeType}",
         );
-        print("[VERIFY] can_add_car value: ${result['can_add_car']}");
-        print("[VERIFY] Message: ${result['message']}");
+        debugPrint("[VERIFY] can_add_car value: ${result['can_add_car']}");
+        debugPrint("[VERIFY] Message: ${result['message']}");
 
         // Handle the response properly
         final isVerified = result['is_verified'];
@@ -233,13 +233,13 @@ class _BookingScreenState extends State<BookingScreen> {
 
           if (!isVerifiedUser) {
             verificationError = message;
-            print("[ERROR] User not verified: $message");
+            debugPrint("[ERROR] User not verified: $message");
           } else {
-            print("[VERIFY] User is verified!");
+            debugPrint("[VERIFY] User is verified!");
           }
         });
       } else {
-        print("[ERROR] HTTP Error: ${response.statusCode}");
+        debugPrint("[ERROR] HTTP Error: ${response.statusCode}");
         setState(() {
           isCheckingVerification = false;
           isVerifiedUser = false;
@@ -247,8 +247,8 @@ class _BookingScreenState extends State<BookingScreen> {
         });
       }
     } catch (e) {
-      print("[ERROR] Exception caught: $e");
-      print("[ERROR] Exception type: ${e.runtimeType}");
+      debugPrint("[ERROR] Exception caught: $e");
+      debugPrint("[ERROR] Exception type: ${e.runtimeType}");
 
       setState(() {
         isCheckingVerification = false;
@@ -377,16 +377,15 @@ class _BookingScreenState extends State<BookingScreen> {
         final returnMinutes = effectiveReturn.hour * 60 + effectiveReturn.minute;
 
         if (returnMinutes - pickupMinutes < 60) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                    'Return time must be at least 1 hour after pickup time on the same day'),
-                backgroundColor: Colors.red,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          }
+          if (!mounted) return;
+          ScaffoldMessenger.of(this.context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Return time must be at least 1 hour after pickup time on the same day'),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
           return;
         }
       }
@@ -1274,14 +1273,14 @@ class _BookingScreenState extends State<BookingScreen> {
 
           _buildBreakdownRow(
             'Base Rental',
-            '${PricingCalculator.formatCurrency(priceBreakdown!.baseRental)}',
+            PricingCalculator.formatCurrency(priceBreakdown!.baseRental),
             subtitle:
                 '₱${priceBreakdown!.pricePerDay.toStringAsFixed(0)} × ${priceBreakdown!.numberOfDays} days',
           ),
 
           if (priceBreakdown!.discount > 0)
             _buildBreakdownRow(
-              '${selectedPeriod} Discount',
+              '$selectedPeriod Discount',
               '-${PricingCalculator.formatCurrency(priceBreakdown!.discount)}',
               isDiscount: true,
               subtitle:
@@ -1850,10 +1849,10 @@ class _BookingScreenState extends State<BookingScreen> {
     }
 
     try {
-      print("[BOOKING] Submitting booking...");
-      print("[BOOKING] User ID: ${widget.userId}");
-      print("[BOOKING] Car ID: ${widget.carId}");
-      print("[BOOKING] Owner ID: ${widget.ownerId}");
+      debugPrint("[BOOKING] Submitting booking...");
+      debugPrint("[BOOKING] User ID: ${widget.userId}");
+      debugPrint("[BOOKING] Car ID: ${widget.carId}");
+      debugPrint("[BOOKING] Owner ID: ${widget.ownerId}");
 
       final requestBody = {
         "user_id": widget.userId!,
@@ -1871,7 +1870,7 @@ class _BookingScreenState extends State<BookingScreen> {
         "total_amount": priceBreakdown!.totalAmount.toStringAsFixed(2),
       };
 
-      print("[BOOKING] Request body: $requestBody");
+      debugPrint("[BOOKING] Request body: $requestBody");
 
       final response = await http
           .post(
@@ -1886,8 +1885,8 @@ class _BookingScreenState extends State<BookingScreen> {
             },
           );
 
-      print("[HTTP] Response status: ${response.statusCode}");
-      print("[HTTP] Response body: ${response.body}");
+      debugPrint("[HTTP] Response status: ${response.statusCode}");
+      debugPrint("[HTTP] Response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -1909,12 +1908,13 @@ class _BookingScreenState extends State<BookingScreen> {
             );
           }
 
-          print("[OK] Booking created! ID: $bookingId");
+          debugPrint("[OK] Booking created! ID: $bookingId");
           if (paymentId != null) {
-            print("[PAYMENT] Payment ID: $paymentId");
+            debugPrint("[PAYMENT] Payment ID: $paymentId");
           }
-          print("[AMOUNT] Total Amount: ${priceBreakdown!.totalAmount}");
+          debugPrint("[AMOUNT] Total Amount: ${priceBreakdown!.totalAmount}");
 
+          if (!mounted) return;
           Navigator.pop(context); // Close loading dialog
 
           // Navigate directly to GCash payment screen (manual verification)
@@ -1946,9 +1946,10 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
           );
         } else {
+          if (!mounted) return;
           Navigator.pop(context);
           String errorMsg = data["message"] ?? "Booking failed";
-          print("[ERROR] Booking failed: $errorMsg");
+          debugPrint("[ERROR] Booking failed: $errorMsg");
 
           // Better error handling
           if (errorMsg.toLowerCase().contains("unauthorized")) {
@@ -1966,15 +1967,18 @@ class _BookingScreenState extends State<BookingScreen> {
           }
         }
       } else if (response.statusCode == 401) {
+        if (!mounted) return;
         Navigator.pop(context);
         _showError("Unauthorized: Please log in again.");
       } else {
+        if (!mounted) return;
         Navigator.pop(context);
         _showError("Server error (${response.statusCode})");
       }
     } catch (e) {
+      if (!mounted) return;
       Navigator.pop(context);
-      print("[ERROR] Exception: $e");
+      debugPrint("[ERROR] Exception: $e");
 
       if (e.toString().contains('timeout')) {
         _showError("Connection timeout. Please check your internet.");

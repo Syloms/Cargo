@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../models/car_listing.dart';
@@ -155,7 +155,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFCDFE3D).withOpacity(0.3),
+                      color: const Color(0xFFCDFE3D).withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(

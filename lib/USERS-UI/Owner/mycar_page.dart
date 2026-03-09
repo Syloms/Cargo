@@ -286,9 +286,9 @@ class _MyCarPageState extends State<MyCarPage> {
     final result = await Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (_, __, ___) =>
+        pageBuilder: (_, _, _) =>
             VehicleTypeSelectionScreen(ownerId: widget.ownerId),
-        transitionsBuilder: (_, animation, __, child) =>
+        transitionsBuilder: (_, animation, _, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
     );

@@ -10,13 +10,13 @@ class CarDetailScreen extends StatefulWidget {
   final String location;
 
   const CarDetailScreen({
-    Key? key,
+    super.key,
     required this.carName,
     required this.carImage,
     required this.price,
     required this.rating,
     required this.location,
-  }) : super(key: key);
+  });
 
   @override
   State<CarDetailScreen> createState() => _CarDetailScreenState();

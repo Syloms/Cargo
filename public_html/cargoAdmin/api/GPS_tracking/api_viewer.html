@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Response Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: #252526;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007acc;
+        }
+        
+        .header h1 {
+            color: #ffffff;
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+        
+        .header p {
+            color: #858585;
+        }
+        
+        .input-section {
+            background: #252526;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 16px;
+        }
+        
+        .input-group label {
+            display: block;
+            color: #cccccc;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: #3c3c3c;
+            border: 1px solid #555555;
+            border-radius: 4px;
+            color: #d4d4d4;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #007acc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        
+        button:hover {
+            background: #005a9e;
+        }
+        
+        .results {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .result-panel {
+            background: #252526;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .result-panel h2 {
+            background: #333333;
+            color: #ffffff;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 1px solid #555555;
+        }
+        
+        .result-content {
+            padding: 16px;
+            max-height: 600px;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .raw-response {
+            color: #ce9178;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .json-formatted {
+            color: #d4d4d4;
+        }
+        
+        .json-key {
+            color: #9cdcfe;
+        }
+        
+        .json-string {
+            color: #ce9178;
+        }
+        
+        .json-number {
+            color: #b5cea8;
+        }
+        
+        .json-boolean {
+            color: #569cd6;
+        }
+        
+        .json-null {
+            color: #569cd6;
+        }
+        
+        .error-message {
+            background: #5a1d1d;
+            border-left: 4px solid #f48771;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 4px;
+        }
+        
+        .success-message {
+            background: #1d5a1d;
+            border-left: 4px solid #71f471;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 4px;
+        }
+        
+        .warning-message {
+            background: #5a4d1d;
+            border-left: 4px solid #f4d471;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 4px;
+        }
+
+        .info-box {
+            background: #1e3a5f;
+            border-left: 4px solid #4fc3f7;
+            padding: 16px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .info-box h3 {
+            color: #4fc3f7;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 4px 0;
+            color: #b3d9ff;
+        }
+
+        .info-box li::before {
+            content: "→ ";
+            color: #4fc3f7;
+        }
+
+        @media (max-width: 768px) {
+            .results {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 API Raw Response Viewer</h1>
+            <p>See exactly what the API is returning (including errors)</p>
+        </div>
+
+        <div class="info-box">
+            <h3>Common Issues This Tool Detects:</h3>
+            <ul>
+                <li>PHP warnings/errors before JSON</li>
+                <li>Whitespace before/after JSON</li>
+                <li>HTML mixed with JSON</li>
+                <li>Encoding issues (BOM, UTF-8)</li>
+                <li>Database connection errors</li>
+            </ul>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label>API Endpoint URL</label>
+                <input type="text" id="api-url" value="http://localhost/carGOAdmin/api/GPS_tracking/get_location_history_debug.php?booking_id=41&time_range=all&limit=50">
+            </div>
+            <button onclick="fetchResponse()">🚀 Fetch & Analyze Response</button>
+        </div>
+
+        <div class="results">
+            <div class="result-panel">
+                <h2>📄 Raw Response (Exactly What Server Sent)</h2>
+                <div class="result-content">
+                    <div id="raw-output" class="raw-response">Click the button to fetch...</div>
+                </div>
+            </div>
+
+            <div class="result-panel">
+                <h2>✨ Parsed JSON (If Valid)</h2>
+                <div class="result-content">
+                    <div id="parsed-output">Click the button to fetch...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchResponse() {
+            const url = document.getElementById('api-url').value;
+            const rawOutput = document.getElementById('raw-output');
+            const parsedOutput = document.getElementById('parsed-output');
+
+            rawOutput.innerHTML = '⏳ Fetching...';
+            parsedOutput.innerHTML = '⏳ Waiting for response...';
+
+            try {
+                const response = await fetch(url);
+                const rawText = await response.text();
+
+                // Show raw response
+                rawOutput.className = 'raw-response';
+                rawOutput.textContent = rawText;
+
+                // Try to parse JSON
+                try {
+                    const jsonData = JSON.parse(rawText);
+                    
+                    // Format JSON nicely
+                    const formatted = syntaxHighlight(JSON.stringify(jsonData, null, 2));
+                    parsedOutput.innerHTML = `
+                        <div class="success-message">
+                            ✅ Valid JSON Response
+                        </div>
+                        <pre class="json-formatted">${formatted}</pre>
+                    `;
+
+                } catch (parseError) {
+                    // JSON parsing failed
+                    const errorPos = parseError.message.match(/position (\d+)/);
+                    const position = errorPos ? parseInt(errorPos[1]) : 0;
+
+                    parsedOutput.innerHTML = `
+                        <div class="error-message">
+                            ❌ JSON Parse Error
+                            <br><br>
+                            <strong>Error:</strong> ${parseError.message}
+                            <br><br>
+                            <strong>Problem Character:</strong> Position ${position}
+                            <br>
+                            <code>${rawText.substring(Math.max(0, position - 20), position + 20)}</code>
+                        </div>
+                        ${analyzeError(rawText)}
+                    `;
+                }
+
+            } catch (error) {
+                rawOutput.innerHTML = `
+                    <div class="error-message">
+                        ❌ Network Error
+                        <br><br>
+                        ${error.message}
+                    </div>
+                `;
+                parsedOutput.innerHTML = `
+                    <div class="error-message">
+                        Cannot parse - network request failed
+                    </div>
+                `;
+            }
+        }
+
+        function analyzeError(rawText) {
+            let diagnosis = '<div class="warning-message"><h3>🔍 Diagnosis:</h3><ul>';
+
+            // Check for PHP errors
+            if (rawText.includes('Warning:') || rawText.includes('Notice:') || rawText.includes('Fatal error:')) {
+                diagnosis += '<li>❌ PHP Error/Warning detected in output</li>';
+                diagnosis += '<li>💡 Fix: Add error_reporting(0) at top of PHP file</li>';
+            }
+
+            // Check for whitespace before JSON
+            if (rawText.match(/^\s+{/)) {
+                diagnosis += '<li>❌ Whitespace before JSON detected</li>';
+                diagnosis += '<li>💡 Fix: Remove spaces/newlines before &lt;?php tag</li>';
+            }
+
+            // Check for HTML
+            if (rawText.includes('<html>') || rawText.includes('<!DOCTYPE')) {
+                diagnosis += '<li>❌ HTML detected in response</li>';
+                diagnosis += '<li>💡 Fix: Check if .htaccess is redirecting or wrong file loaded</li>';
+            }
+
+            // Check for UTF-8 BOM
+            if (rawText.charCodeAt(0) === 0xFEFF) {
+                diagnosis += '<li>❌ UTF-8 BOM detected</li>';
+                diagnosis += '<li>💡 Fix: Save file as UTF-8 without BOM</li>';
+            }
+
+            // Check for closing PHP tag output
+            if (rawText.includes('?>')) {
+                diagnosis += '<li>⚠️ Closing ?&gt; tag found in output</li>';
+                diagnosis += '<li>💡 Fix: Remove closing ?&gt; tag from PHP file</li>';
+            }
+
+            diagnosis += '</ul></div>';
+            return diagnosis;
+        }
+
+        function syntaxHighlight(json) {
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'json-number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'json-key';
+                    } else {
+                        cls = 'json-string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'json-null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+    </script>
+</body>
+</html>

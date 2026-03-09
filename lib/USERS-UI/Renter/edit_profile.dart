@@ -225,7 +225,7 @@ class _EditProfileState extends State<EditProfile> with SingleTickerProviderStat
 
       // ✅ CRITICAL: Check if user cancelled
       if (file == null) {
-        print("📷 User cancelled image selection");
+        debugPrint("📷 User cancelled image selection");
         return;
       }
 
@@ -243,8 +243,8 @@ class _EditProfileState extends State<EditProfile> with SingleTickerProviderStat
       
       setState(() => hasChanges = true);
     } catch (e, stackTrace) {
-      print("❌ Error picking image: $e");
-      print("Stack trace: $stackTrace");
+      debugPrint("❌ Error picking image: $e");
+      debugPrint("Stack trace: $stackTrace");
       
       if (!mounted) return;
       
@@ -310,7 +310,7 @@ class _EditProfileState extends State<EditProfile> with SingleTickerProviderStat
         String img = updated["profile_image"] ?? "";
         String finalURL = img.startsWith("http")
             ? img
-            : GlobalApiConfig.uploadsUrl + "/profile_images/" + img;
+            : "${GlobalApiConfig.uploadsUrl}/profile_images/$img";
 
 await prefs.setString("profile_image", finalURL);
 
